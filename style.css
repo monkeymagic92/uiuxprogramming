@@ -154,3 +154,31 @@ input[type="email"] {
   color: #747786;
   font-size: 14px;
 }
+
+.site-nav a {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.site-nav a:hover {
+  color: #24503f;
+  background-color: #e3efe9;
+}
+
+.site-nav a:focus {
+  outline: 3px solid #a8ccbd;
+  outline-offset: 3px;
+}
+
+input[type="email"]:focus {
+  border-color: #2f6b5a;
+  outline: 3px solid #cfe4da;
+  outline-offset: 2px;
+}
+
+.primary-button {
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.primary-button:hover { background-color: #24503f; }
+.primary-button:focus { outline: 3px solid #a8ccbd; outline-offset: 3px; }
+.primary-button:active { transform: translateY(1px); }
