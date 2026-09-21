@@ -235,6 +235,9 @@ input[type="email"]:focus {
     gap: 24px;
   }
 
+  /* 세로 배치에서는 flex 기준값이 높이가 되므로 되돌린다 */
+  .service-image { flex: 0 1 auto; }
+
   /* 기능 카드를 한 열로 */
   .feature-list {
     grid-template-columns: 1fr;
