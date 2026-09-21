@@ -190,3 +190,66 @@ input[type="email"]:focus {
 .primary-button:hover { background-color: #24503f; }
 .primary-button:focus { outline: 3px solid #a8ccbd; outline-offset: 3px; }
 .primary-button:active { transform: translateY(1px); }
+
+/* 화면 가로 폭이 768px 이하일 때만 적용 */
+@media (max-width: 768px) {
+  body { font-size: 16px; }
+
+  .site-header,
+  main,
+  .site-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .site-header {
+    padding-top: 40px;
+    padding-bottom: 32px;
+  }
+
+  h1 { font-size: 32px; }
+  h2 { font-size: 24px; }
+
+  .header-description {
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+
+  .content-section {
+    padding: 24px;
+  }
+
+  /* 가로로 붙어 있던 메뉴를 위에서 아래로 */
+  .site-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .site-nav a { padding: 10px 12px; }
+
+  /* 소개 글과 이미지를 위아래로 */
+  .about-layout {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+  }
+
+  /* 기능 카드를 한 열로 */
+  .feature-list {
+    grid-template-columns: 1fr;
+  }
+
+  /* 입력창과 버튼을 한 열로 */
+  .subscribe-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  input[type="email"],
+  .primary-button {
+    width: 100%;
+  }
+
+  .primary-button { min-height: 48px; }
+}
