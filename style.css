@@ -191,6 +191,40 @@ input[type="email"]:focus {
 .primary-button:focus { outline: 3px solid #a8ccbd; outline-offset: 3px; }
 .primary-button:active { transform: translateY(1px); }
 
+/* 알림 신청 결과 문구 */
+.form-message {
+  margin: 16px 0 0;
+  color: #5e6272;
+}
+
+.form-message.is-error {
+  padding: 12px 14px;
+  border-radius: 8px;
+  color: #a33a2b;
+  background-color: #fbeae7;
+  font-weight: 700;
+}
+
+.form-message.is-done {
+  padding: 12px 14px;
+  border-radius: 8px;
+  color: #ffffff;
+  background-color: #2f6b5a;
+  font-weight: 700;
+}
+
+/* 신청 뒤 버튼과 입력창 */
+.primary-button:disabled {
+  color: #ffffff;
+  background-color: #a3aca8;
+  cursor: not-allowed;
+}
+
+input[type="email"]:disabled {
+  color: #5e6272;
+  background-color: #eef4f1;
+}
+
 /* 화면 가로 폭이 768px 이하일 때만 적용 */
 @media (max-width: 768px) {
   body { font-size: 16px; }

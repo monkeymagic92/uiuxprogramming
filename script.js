@@ -25,6 +25,24 @@ function subscribe(event) {
 
   const email = emailInput.value;
   subscribeMessage.textContent = makeSubscribeMessage(email);
+
+  if (email === "") {
+    // 비어 있으면 경고 스타일만 주고 다시 입력을 기다린다
+    subscribeMessage.classList.remove("is-done");
+    subscribeMessage.classList.add("is-error");
+    emailInput.focus();
+  } else {
+    isSubscribed = true;
+    subscribeMessage.classList.remove("is-error");
+    subscribeMessage.classList.add("is-done");
+
+    // 같은 신청이 반복되지 않게 버튼을 막는다
+    subscribeButton.textContent = "신청 완료";
+    subscribeButton.disabled = true;
+    emailInput.disabled = true;
+  }
+
+  console.log("신청 상태:", isSubscribed);
 }
 
 subscribeForm.addEventListener("submit", subscribe);
