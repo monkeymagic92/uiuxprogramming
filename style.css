@@ -193,6 +193,7 @@ input[type="email"]:focus {
 
 /* 알림 신청 결과 문구 */
 .form-message {
+  max-width: 570px;
   margin: 16px 0 0;
   color: #5e6272;
 }
