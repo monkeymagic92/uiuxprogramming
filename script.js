@@ -65,3 +65,14 @@ function handleThemeClick() {
 }
 
 themeButton.addEventListener("click", handleThemeClick);
+
+// input: 글자를 쓰거나 지울 때마다 글자 수를 바로 보여 준다
+function handleUserNameInput() {
+  const currentLength = userNameInput.value.length;
+  userNameCount.textContent = currentLength + " / 10";
+
+  // 10자를 다 채우면 더 쓸 수 없다는 걸 색으로 알려 준다
+  userNameCount.classList.toggle("is-full", currentLength === 10);
+}
+
+userNameInput.addEventListener("input", handleUserNameInput);
