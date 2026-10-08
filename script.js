@@ -76,3 +76,17 @@ function handleUserNameInput() {
 }
 
 userNameInput.addEventListener("input", handleUserNameInput);
+
+// change: 규칙 확인 여부 하나로 문구, 스타일, 버튼을 함께 바꾼다
+function handleAgreeChange() {
+  const agreed = agreeCheck.checked;
+
+  startButton.disabled = !agreed;
+  agreeMessage.textContent = agreed
+    ? "확인했습니다. 이제 예약을 시작할 수 있습니다."
+    : "이용 규칙을 확인하면 예약을 시작할 수 있습니다.";
+
+  agreeMessage.classList.toggle("is-ready", agreed);
+}
+
+agreeCheck.addEventListener("change", handleAgreeChange);

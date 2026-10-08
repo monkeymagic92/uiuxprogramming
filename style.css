@@ -280,6 +280,12 @@ input[type="email"]:disabled {
   background-color: #eef4f1;
 }
 
+#agreeMessage.is-ready {
+  color: #24503f;
+  background-color: #d6eae1;
+  font-weight: 700;
+}
+
 /* 어두운 화면 (body에 dark 클래스가 붙었을 때) */
 body.dark {
   color: #e8eeeb;
