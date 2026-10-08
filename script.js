@@ -90,3 +90,41 @@ function handleAgreeChange() {
 }
 
 agreeCheck.addEventListener("change", handleAgreeChange);
+
+// 주요 기능 탭: 같은 역할의 요소가 여러 개라 querySelectorAll로 모두 찾는다
+const tabs = document.querySelectorAll(".tab");
+const panels = document.querySelectorAll(".panel");
+
+// 모든 탭과 패널의 선택 상태를 먼저 해제한다
+function resetTabsAndPanels() {
+  tabs.forEach(function (tab) {
+    tab.classList.remove("is-active");
+    tab.setAttribute("aria-selected", "false");
+  });
+
+  panels.forEach(function (panel) {
+    panel.classList.remove("is-active");
+    panel.hidden = true;
+  });
+}
+
+// 누른 탭과 data-target으로 연결된 패널만 켠다
+function activateTab(clickedTab) {
+  const targetSelector = clickedTab.dataset.target;
+  const targetPanel = document.querySelector(targetSelector);
+
+  clickedTab.classList.add("is-active");
+  clickedTab.setAttribute("aria-selected", "true");
+
+  targetPanel.classList.add("is-active");
+  targetPanel.hidden = false;
+}
+
+function handleTabClick(event) {
+  resetTabsAndPanels();
+  activateTab(event.currentTarget);
+}
+
+tabs.forEach(function (tab) {
+  tab.addEventListener("click", handleTabClick);
+});
