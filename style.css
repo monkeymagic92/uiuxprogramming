@@ -275,6 +275,26 @@ input[type="email"]:disabled {
   background-color: #eef4f1;
 }
 
+/* 어두운 화면 (body에 dark 클래스가 붙었을 때) */
+body.dark {
+  color: #e8eeeb;
+  background-color: #1b211f;
+}
+
+body.dark p {
+  color: #c5d0cb;
+}
+
+body.dark .content-section {
+  border-color: #3a4642;
+  background-color: #232a27;
+}
+
+body.dark .interaction-item {
+  border-color: #44524d;
+  background-color: #2c3532;
+}
+
 /* 화면 가로 폭이 768px 이하일 때만 적용 */
 @media (max-width: 768px) {
   body { font-size: 16px; }

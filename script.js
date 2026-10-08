@@ -46,3 +46,22 @@ function subscribe(event) {
 }
 
 subscribeForm.addEventListener("submit", subscribe);
+
+// 예약 준비 영역에서 바꿀 요소
+const themeButton = document.querySelector("#themeButton");
+const userNameInput = document.querySelector("#userName");
+const userNameCount = document.querySelector("#userNameCount");
+const agreeCheck = document.querySelector("#agreeCheck");
+const agreeMessage = document.querySelector("#agreeMessage");
+const startButton = document.querySelector("#startButton");
+
+// click: 화면 밝기를 바꾸고 버튼 문구도 지금 상태에 맞춘다
+function handleThemeClick() {
+  const isDark = document.body.classList.toggle("dark");
+
+  themeButton.textContent = isDark
+    ? "밝은 화면으로 보기"
+    : "어두운 화면으로 보기";
+}
+
+themeButton.addEventListener("click", handleThemeClick);
