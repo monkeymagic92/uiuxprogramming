@@ -23,6 +23,7 @@
       <a href="#about">서비스 소개</a>
       <a href="#features">주요 기능</a>
       <a href="#steps">이용 방법</a>
+      <a href="#prepare">예약 준비</a>
       <a href="#subscribe">소식 받기</a>
     </nav>
   </header>
@@ -73,6 +74,45 @@
         <li>원하는 날짜와 시간을 고릅니다.</li>
         <li>예약을 확정하고 방문합니다.</li>
       </ol>
+    </section>
+
+    <section id="prepare" class="content-section settings-panel">
+      <h2>예약 준비</h2>
+
+      <div class="interaction-item">
+        <h3>화면 밝기</h3>
+        <p>밤늦게 공부방을 찾을 때는 어두운 화면이 눈이 편합니다.</p>
+        <button class="primary-button" id="themeButton" type="button">어두운 화면으로 보기</button>
+      </div>
+
+      <div class="interaction-item">
+        <label for="userName">예약자 이름</label>
+        <input
+          id="userName"
+          type="text"
+          maxlength="10"
+          placeholder="10자 이내로 입력"
+        >
+        <p id="userNameCount" aria-live="polite">0 / 10</p>
+      </div>
+
+      <div class="interaction-item">
+        <h3>이용 규칙</h3>
+        <ul class="rule-list">
+          <li>통화와 대화는 휴게 공간에서 합니다.</li>
+          <li>음식물은 가지고 들어갈 수 없습니다.</li>
+          <li>예약 시간이 끝나면 자리를 정리하고 나갑니다.</li>
+        </ul>
+
+        <label class="agree-row" for="agreeCheck">
+          <input id="agreeCheck" type="checkbox">
+          이용 규칙을 확인했습니다.
+        </label>
+
+        <p id="agreeMessage" aria-live="polite">이용 규칙을 확인하면 예약을 시작할 수 있습니다.</p>
+
+        <button class="primary-button" id="startButton" type="button" disabled>예약 시작하기</button>
+      </div>
     </section>
 
     <section id="subscribe" class="content-section subscribe-section">
