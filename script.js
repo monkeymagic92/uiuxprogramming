@@ -247,3 +247,41 @@ function fillSummary() {
   summaryPlace.textContent = bookingArea.value + " · " + bookingSeat.value;
   summaryTime.textContent = bookingDate.value + " " + bookingTime.value + "부터 " + bookingHours.value + "시간";
 }
+
+// click: 예약을 확정하면 완료 화면에 고른 내용을 한 문장으로 보여 준다
+const bookingDoneText = document.querySelector("#bookingDoneText");
+
+function handleCompleteClick() {
+  bookingDoneText.textContent = summaryName.textContent + ", " + summaryPlace.textContent
+    + " " + summaryTime.textContent + " 예약이 확정되었습니다.";
+  showBookingStep(4);
+}
+
+document.querySelector("#bookingComplete").addEventListener("click", handleCompleteClick);
+
+// click: 다시 예약하기는 예약 흐름의 선택·오류·진행 상태를 처음으로 되돌린다
+// 이름과 규칙 확인은 예약 준비 영역 값이라 그대로 둔다
+function handleRestartClick() {
+  bookingArea.value = "";
+  bookingSeat.value = "1인석";
+  bookingDate.value = "";
+  bookingTime.value = "";
+  bookingHours.value = "1";
+
+  areaError.textContent = "";
+  timeError.textContent = "";
+  bookingArea.classList.remove("has-error");
+  bookingDate.classList.remove("has-error");
+  bookingTime.classList.remove("has-error");
+
+  seatHelp.hidden = true;
+  summaryName.textContent = "";
+  summaryPlace.textContent = "";
+  summaryTime.textContent = "";
+  bookingDoneText.textContent = "";
+
+  showBookingStep(1);
+  bookingArea.focus();
+}
+
+document.querySelector("#bookingRestart").addEventListener("click", handleRestartClick);
