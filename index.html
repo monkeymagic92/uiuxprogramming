@@ -120,6 +120,7 @@
           placeholder="10자 이내로 입력"
         >
         <p id="userNameCount" aria-live="polite">0 / 10</p>
+        <p id="userNameError" class="booking-error" role="alert"></p>
       </div>
 
       <div class="interaction-item">
@@ -138,6 +139,105 @@
         <p id="agreeMessage" aria-live="polite">이용 규칙을 확인하면 예약을 시작할 수 있습니다.</p>
 
         <button class="primary-button" id="startButton" type="button" disabled>예약 시작하기</button>
+      </div>
+    </section>
+
+    <!--
+    7주차 사용자 흐름
+    사용자: 이번 주 안에 집 근처 공부방 자리를 잡고 싶은 사람
+    목표: 동네·자리·날짜·시간을 골라 공부방 예약을 확정한다.
+    완료 조건: 확인 화면에서 고른 내용을 검토하고 '예약 확정' 화면에 도달한다.
+    흐름: 예약 시작(규칙 확인 + 이름) → 공부방 선택 → 날짜·시간 선택 → 내용 확인 → 예약 확정
+    -->
+    <section id="bookingFlow" class="content-section" hidden>
+      <h2>공부방 예약</h2>
+      <p id="bookingProgress" class="booking-progress" aria-live="polite">1 / 3 · 공부방 선택</p>
+
+      <div class="booking-step" data-step="1">
+        <h3>공부방 선택</h3>
+
+        <label for="bookingArea">동네</label>
+        <select id="bookingArea" aria-describedby="areaError">
+          <option value="">동네를 선택하세요</option>
+          <option value="망원동">망원동</option>
+          <option value="연남동">연남동</option>
+          <option value="합정동">합정동</option>
+          <option value="성산동">성산동</option>
+        </select>
+
+        <label for="bookingSeat">자리 종류</label>
+        <select id="bookingSeat">
+          <option value="1인석">1인석</option>
+          <option value="스터디룸">스터디룸 (최대 4명)</option>
+        </select>
+        <p id="seatHelp" class="booking-help" hidden>스터디룸은 함께 쓰는 사람도 이용 규칙을 지켜야 합니다. 같이 오는 사람에게 미리 알려 주세요.</p>
+
+        <p id="areaError" class="booking-error" role="alert"></p>
+
+        <div class="step-actions">
+          <button class="primary-button" id="bookingNext1" type="button">날짜·시간 고르기</button>
+        </div>
+      </div>
+
+      <div class="booking-step" data-step="2" hidden>
+        <h3>날짜·시간 선택</h3>
+
+        <label for="bookingDate">이용 날짜</label>
+        <input id="bookingDate" type="date" aria-describedby="timeError">
+
+        <label for="bookingTime">시작 시간</label>
+        <select id="bookingTime" aria-describedby="timeError">
+          <option value="">시작 시간을 선택하세요</option>
+          <option value="09:00">09:00</option>
+          <option value="11:00">11:00</option>
+          <option value="13:00">13:00</option>
+          <option value="15:00">15:00</option>
+          <option value="17:00">17:00</option>
+          <option value="19:00">19:00</option>
+        </select>
+
+        <label for="bookingHours">이용 시간</label>
+        <select id="bookingHours">
+          <option value="1">1시간</option>
+          <option value="2">2시간</option>
+          <option value="3">3시간</option>
+          <option value="4">4시간</option>
+        </select>
+
+        <p id="timeError" class="booking-error" role="alert"></p>
+
+        <div class="step-actions">
+          <button class="secondary-button" id="bookingBack2" type="button">공부방 다시 고르기</button>
+          <button class="primary-button" id="bookingNext2" type="button">예약 내용 확인하기</button>
+        </div>
+      </div>
+
+      <div class="booking-step" data-step="3" hidden>
+        <h3>예약 내용 확인</h3>
+
+        <dl class="booking-summary">
+          <dt>예약자</dt>
+          <dd id="summaryName"></dd>
+          <dt>공부방</dt>
+          <dd id="summaryPlace"></dd>
+          <dt>날짜·시간</dt>
+          <dd id="summaryTime"></dd>
+        </dl>
+
+        <div class="step-actions">
+          <button class="secondary-button" id="bookingBack3" type="button">날짜·시간 수정하기</button>
+          <button class="primary-button" id="bookingComplete" type="button">예약 확정하기</button>
+        </div>
+      </div>
+
+      <div class="booking-step booking-done" data-step="4" hidden>
+        <h3>예약이 확정되었습니다</h3>
+        <p id="bookingDoneText"></p>
+        <p>이용 1시간 전까지는 취소할 수 있습니다.</p>
+
+        <div class="step-actions">
+          <button class="primary-button" id="bookingRestart" type="button">다시 예약하기</button>
+        </div>
       </div>
     </section>
 

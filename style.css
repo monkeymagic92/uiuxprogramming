@@ -315,6 +315,104 @@ input[type="email"]:disabled {
   font-weight: 700;
 }
 
+/* 공부방 예약 흐름 */
+#bookingFlow[hidden],
+.booking-step[hidden],
+.booking-help[hidden] {
+  display: none;
+}
+
+.booking-progress {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: #24503f;
+  background-color: #eef4f1;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.booking-step {
+  padding: 24px;
+  border: 1px solid #dde5e1;
+  border-radius: 14px;
+}
+
+.booking-step label {
+  display: block;
+  margin-top: 16px;
+  font-weight: 700;
+}
+
+.booking-step h3 + label {
+  margin-top: 0;
+}
+
+.booking-step select,
+.booking-step input[type="date"] {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  margin-top: 8px;
+  padding: 12px 14px;
+  border: 1px solid #bfc9c4;
+  border-radius: 8px;
+  font: inherit;
+  background-color: #ffffff;
+}
+
+.booking-step select:focus,
+.booking-step input[type="date"]:focus {
+  border-color: #2f6b5a;
+  outline: 3px solid #cfe4da;
+  outline-offset: 2px;
+}
+
+.booking-help {
+  max-width: 480px;
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  color: #24503f;
+  background-color: #eef4f1;
+}
+
+.step-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.secondary-button {
+  padding: 12px 18px;
+  border: 1px solid #2f6b5a;
+  border-radius: 8px;
+  color: #2f6b5a;
+  font: inherit;
+  font-weight: 700;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+.secondary-button:hover { background-color: #e3efe9; }
+.secondary-button:focus { outline: 3px solid #a8ccbd; outline-offset: 3px; }
+
+.booking-summary {
+  margin: 0;
+}
+
+.booking-summary dt {
+  color: #5e6272;
+  font-size: 14px;
+}
+
+.booking-summary dd {
+  margin: 0 0 12px;
+  font-weight: 700;
+}
+
 /* 어두운 화면 (body에 dark 클래스가 붙었을 때) */
 body.dark {
   color: #e8eeeb;
