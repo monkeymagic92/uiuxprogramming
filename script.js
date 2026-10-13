@@ -139,14 +139,22 @@ const stepNames = ["공부방 선택", "날짜·시간 선택", "내용 확인"]
 
 // 고른 단계 하나만 보이고 진행 표시도 그 단계에 맞춘다
 function showBookingStep(step) {
+  let currentStep;
+
   bookingSteps.forEach(function (item) {
     item.hidden = Number(item.dataset.step) !== step;
+    if (!item.hidden) {
+      currentStep = item;
+    }
   });
 
   bookingProgress.textContent = step <= 3
     ? step + " / 3 · " + stepNames[step - 1]
     : "예약 완료";
   bookingProgress.classList.toggle("is-done", step === 4);
+
+  // 숨겨진 단계에 포커스가 남지 않게 새 단계의 첫 입력칸이나 버튼으로 옮긴다
+  currentStep.querySelector("select, input, button").focus();
 }
 
 // click: 규칙 확인(버튼 활성)에 이어 이름까지 있어야 예약 흐름을 연다
@@ -163,7 +171,6 @@ function handleStartClick() {
 
   bookingFlow.hidden = false;
   showBookingStep(1);
-  bookingArea.focus();
 }
 
 startButton.addEventListener("click", handleStartClick);
@@ -252,8 +259,8 @@ function fillSummary() {
 const bookingDoneText = document.querySelector("#bookingDoneText");
 
 function handleCompleteClick() {
-  bookingDoneText.textContent = summaryName.textContent + ", " + summaryPlace.textContent
-    + " " + summaryTime.textContent + " 예약이 확정되었습니다.";
+  bookingDoneText.textContent = summaryName.textContent + ", " + bookingArea.value + " "
+    + bookingSeat.value + "을 " + summaryTime.textContent + " 동안 예약했습니다.";
   showBookingStep(4);
 }
 
@@ -281,7 +288,6 @@ function handleRestartClick() {
   bookingDoneText.textContent = "";
 
   showBookingStep(1);
-  bookingArea.focus();
 }
 
 document.querySelector("#bookingRestart").addEventListener("click", handleRestartClick);
