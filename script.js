@@ -128,3 +128,42 @@ function handleTabClick(event) {
 tabs.forEach(function (tab) {
   tab.addEventListener("click", handleTabClick);
 });
+
+// 공부방 예약 흐름
+const userNameError = document.querySelector("#userNameError");
+const bookingFlow = document.querySelector("#bookingFlow");
+const bookingSteps = document.querySelectorAll(".booking-step");
+const bookingProgress = document.querySelector("#bookingProgress");
+const bookingArea = document.querySelector("#bookingArea");
+const stepNames = ["공부방 선택", "날짜·시간 선택", "내용 확인"];
+
+// 고른 단계 하나만 보이고 진행 표시도 그 단계에 맞춘다
+function showBookingStep(step) {
+  bookingSteps.forEach(function (item) {
+    item.hidden = Number(item.dataset.step) !== step;
+  });
+
+  bookingProgress.textContent = step <= 3
+    ? step + " / 3 · " + stepNames[step - 1]
+    : "예약 완료";
+  bookingProgress.classList.toggle("is-done", step === 4);
+}
+
+// click: 규칙 확인(버튼 활성)에 이어 이름까지 있어야 예약 흐름을 연다
+function handleStartClick() {
+  if (userNameInput.value.trim() === "") {
+    userNameError.textContent = "예약자 이름을 입력해 주세요. 확인 화면에 이 이름이 들어갑니다.";
+    userNameInput.classList.add("has-error");
+    userNameInput.focus();
+    return;
+  }
+
+  userNameError.textContent = "";
+  userNameInput.classList.remove("has-error");
+
+  bookingFlow.hidden = false;
+  showBookingStep(1);
+  bookingArea.focus();
+}
+
+startButton.addEventListener("click", handleStartClick);
