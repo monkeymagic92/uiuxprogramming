@@ -167,3 +167,60 @@ function handleStartClick() {
 }
 
 startButton.addEventListener("click", handleStartClick);
+
+// 단계마다 확인할 입력 요소
+const areaError = document.querySelector("#areaError");
+const bookingDate = document.querySelector("#bookingDate");
+const bookingTime = document.querySelector("#bookingTime");
+const timeError = document.querySelector("#timeError");
+
+// click: 동네를 고르지 않으면 1단계에 머문다
+function handleNext1Click() {
+  if (bookingArea.value === "") {
+    areaError.textContent = "동네를 선택해 주세요. 목록에서 가까운 동네를 고르면 됩니다.";
+    bookingArea.classList.add("has-error");
+    bookingArea.focus();
+    return;
+  }
+
+  areaError.textContent = "";
+  bookingArea.classList.remove("has-error");
+  showBookingStep(2);
+}
+
+// click: 날짜와 시작 시간이 둘 다 있어야 확인 단계로 간다
+function handleNext2Click() {
+  const missingDate = bookingDate.value === "";
+  const missingTime = bookingTime.value === "";
+
+  if (missingDate || missingTime) {
+    timeError.textContent = missingDate
+      ? "이용 날짜를 선택해 주세요. 달력 아이콘을 누르면 고를 수 있습니다."
+      : "시작 시간을 선택해 주세요.";
+    bookingDate.classList.toggle("has-error", missingDate);
+    bookingTime.classList.toggle("has-error", missingTime);
+
+    if (missingDate) {
+      bookingDate.focus();
+    } else {
+      bookingTime.focus();
+    }
+    return;
+  }
+
+  timeError.textContent = "";
+  bookingDate.classList.remove("has-error");
+  bookingTime.classList.remove("has-error");
+  showBookingStep(3);
+}
+
+document.querySelector("#bookingNext1").addEventListener("click", handleNext1Click);
+document.querySelector("#bookingNext2").addEventListener("click", handleNext2Click);
+
+// 이전 단계로 갈 때는 값을 지우지 않고 화면만 바꾼다
+document.querySelector("#bookingBack2").addEventListener("click", function () {
+  showBookingStep(1);
+});
+document.querySelector("#bookingBack3").addEventListener("click", function () {
+  showBookingStep(2);
+});
