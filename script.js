@@ -211,6 +211,7 @@ function handleNext2Click() {
   timeError.textContent = "";
   bookingDate.classList.remove("has-error");
   bookingTime.classList.remove("has-error");
+  fillSummary();
   showBookingStep(3);
 }
 
@@ -224,3 +225,25 @@ document.querySelector("#bookingBack2").addEventListener("click", function () {
 document.querySelector("#bookingBack3").addEventListener("click", function () {
   showBookingStep(2);
 });
+
+// change: 스터디룸을 고르면 함께 오는 사람 안내를 보여 준다
+const bookingSeat = document.querySelector("#bookingSeat");
+const seatHelp = document.querySelector("#seatHelp");
+
+function handleSeatChange() {
+  seatHelp.hidden = bookingSeat.value !== "스터디룸";
+}
+
+bookingSeat.addEventListener("change", handleSeatChange);
+
+// 확인 화면: 확인 단계로 넘어갈 때마다 지금 값으로 다시 채운다
+const bookingHours = document.querySelector("#bookingHours");
+const summaryName = document.querySelector("#summaryName");
+const summaryPlace = document.querySelector("#summaryPlace");
+const summaryTime = document.querySelector("#summaryTime");
+
+function fillSummary() {
+  summaryName.textContent = userNameInput.value.trim() + "님";
+  summaryPlace.textContent = bookingArea.value + " · " + bookingSeat.value;
+  summaryTime.textContent = bookingDate.value + " " + bookingTime.value + "부터 " + bookingHours.value + "시간";
+}
