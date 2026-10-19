@@ -261,6 +261,7 @@ const bookingDoneText = document.querySelector("#bookingDoneText");
 function handleCompleteClick() {
   bookingDoneText.textContent = summaryName.textContent + ", " + bookingArea.value + " "
     + bookingSeat.value + "을 " + summaryTime.textContent + " 동안 예약했습니다.";
+  addMyBooking();
   showBookingStep(4);
 }
 
@@ -291,3 +292,77 @@ function handleRestartClick() {
 }
 
 document.querySelector("#bookingRestart").addEventListener("click", handleRestartClick);
+
+
+// 내 예약: 확정한 예약을 배열에 모아 두고, 바뀔 때마다 목록을 다시 그린다
+const myBookingList = document.querySelector("#myBookingList");
+const myBookingsEmpty = document.querySelector("#myBookingsEmpty");
+const myBookingsMessage = document.querySelector("#myBookingsMessage");
+const bookingItemTemplate = document.querySelector("#bookingItemTemplate");
+
+const myBookings = [];
+let nextBookingId = 1;
+
+// 지금 예약 흐름에 들어 있는 값으로 예약 하나를 만들어 맨 앞에 넣는다
+function addMyBooking() {
+  myBookings.unshift({
+    id: nextBookingId,
+    name: userNameInput.value.trim(),
+    area: bookingArea.value,
+    seat: bookingSeat.value,
+    date: bookingDate.value,
+    time: bookingTime.value,
+    hours: Number(bookingHours.value),
+    status: "예약됨"
+  });
+  nextBookingId = nextBookingId + 1;
+
+  showListMessage("", "");
+  renderMyBookings();
+}
+
+// 템플릿을 복사해 예약 한 건의 목록 줄을 만든다
+function makeBookingItem(booking) {
+  const item = bookingItemTemplate.content.firstElementChild.cloneNode(true);
+
+  item.querySelector(".booking-item-place").textContent = booking.area + " · " + booking.seat;
+  item.querySelector(".booking-item-time").textContent =
+    booking.date + " " + booking.time + "부터 " + booking.hours + "시간";
+  item.querySelector(".booking-status").textContent = booking.status;
+
+  return item;
+}
+
+function renderMyBookings() {
+  myBookingList.innerHTML = "";
+
+  // 예약이 하나도 없을 때만 빈 목록 안내를 보여 준다
+  myBookingsEmpty.hidden = myBookings.length > 0;
+
+  myBookings.forEach(function (booking) {
+    myBookingList.appendChild(makeBookingItem(booking));
+  });
+}
+
+// 목록 위 안내 문구. type은 is-error, is-done 중 하나이거나 빈 값
+function showListMessage(text, type) {
+  myBookingsMessage.textContent = text;
+  myBookingsMessage.classList.toggle("is-error", type === "is-error");
+  myBookingsMessage.classList.toggle("is-done", type === "is-done");
+}
+
+// click: 완료 화면에서 내 예약으로 이동해 방금 넣은 예약에 포커스를 둔다
+document.querySelector("#viewMyBookings").addEventListener("click", function () {
+  myBookingList.querySelector("button, .booking-item").focus();
+});
+
+// click: 새로 예약하기. 예약 흐름을 연 적이 없으면 예약 준비부터 시작한다
+function handleNewBookingClick() {
+  if (bookingFlow.hidden) {
+    userNameInput.focus();
+    return;
+  }
+  handleRestartClick();
+}
+
+document.querySelector("#newBookingButton").addEventListener("click", handleNewBookingClick);

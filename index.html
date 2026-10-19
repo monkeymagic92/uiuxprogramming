@@ -24,6 +24,7 @@
       <a href="#features">주요 기능</a>
       <a href="#steps">이용 방법</a>
       <a href="#prepare">예약 준비</a>
+      <a href="#myBookings">내 예약</a>
       <a href="#subscribe">소식 받기</a>
     </nav>
   </header>
@@ -233,12 +234,43 @@
       <div class="booking-step booking-done" data-step="4" hidden>
         <h3>예약이 확정되었습니다</h3>
         <p id="bookingDoneText"></p>
-        <p>이용 1시간 전까지는 취소할 수 있습니다.</p>
+        <p>내 예약에 추가했습니다. 이용 1시간 전까지는 내 예약에서 취소할 수 있습니다.</p>
 
         <div class="step-actions">
+          <button class="secondary-button" id="viewMyBookings" type="button">내 예약 보기</button>
           <button class="primary-button" id="bookingRestart" type="button">다시 예약하기</button>
         </div>
       </div>
+    </section>
+
+    <!--
+    중간고사 추가 기능
+    사용자 행동: 확정한 예약을 내 예약에서 다시 열어 보고, 일정이 바뀌면 취소한다.
+    연결 지점: 7주차 흐름의 끝(예약 확정). 확정할 때 이미 있는 예약과 시간이 겹치는지 확인한다.
+    -->
+    <section id="myBookings" class="content-section">
+      <h2>내 예약</h2>
+      <p>확정한 예약이 최근 순서로 쌓입니다. 이용 1시간 전까지 취소할 수 있습니다.</p>
+
+      <p id="myBookingsMessage" class="list-message" aria-live="polite"></p>
+      <p id="myBookingsEmpty" class="booking-empty">아직 확정한 예약이 없습니다. 예약 준비에서 이름을 쓰고 이용 규칙을 확인한 뒤 예약을 시작해 주세요.</p>
+
+      <ul id="myBookingList" class="booking-list"></ul>
+
+      <div class="step-actions">
+        <button class="primary-button" id="newBookingButton" type="button">새로 예약하기</button>
+      </div>
+
+      <!-- 목록 한 줄의 모양. script.js가 복사해서 값을 채운다 -->
+      <template id="bookingItemTemplate">
+        <li class="booking-item">
+          <div class="booking-item-head">
+            <h3 class="booking-item-place"></h3>
+            <span class="booking-status"></span>
+          </div>
+          <p class="booking-item-time"></p>
+        </li>
+      </template>
     </section>
 
     <section id="subscribe" class="content-section subscribe-section">
