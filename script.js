@@ -218,6 +218,7 @@ function handleNext2Click() {
   timeError.textContent = "";
   bookingDate.classList.remove("has-error");
   bookingTime.classList.remove("has-error");
+  clearOverlapError();
   fillSummary();
   showBookingStep(3);
 }
@@ -258,7 +259,20 @@ function fillSummary() {
 // click: 예약을 확정하면 완료 화면에 고른 내용을 한 문장으로 보여 준다
 const bookingDoneText = document.querySelector("#bookingDoneText");
 
+const overlapError = document.querySelector("#overlapError");
+
 function handleCompleteClick() {
+  // 이미 확정한 예약과 시간이 겹치면 확정하지 않고 날짜·시간 수정으로 안내한다
+  const overlap = findOverlappingBooking();
+
+  if (overlap) {
+    overlapError.textContent = overlap.date + " " + overlap.time + "부터 " + overlap.hours + "시간 동안 "
+      + overlap.area + " " + overlap.seat + " 예약이 이미 있습니다. 날짜·시간 수정하기를 눌러 겹치지 않는 시간을 골라 주세요.";
+    summaryTime.classList.add("has-error");
+    document.querySelector("#bookingBack3").focus();
+    return;
+  }
+
   bookingDoneText.textContent = summaryName.textContent + ", " + bookingArea.value + " "
     + bookingSeat.value + "을 " + summaryTime.textContent + " 동안 예약했습니다.";
   addMyBooking();
@@ -283,6 +297,7 @@ function handleRestartClick() {
   bookingTime.classList.remove("has-error");
 
   seatHelp.hidden = true;
+  clearOverlapError();
   summaryName.textContent = "";
   summaryPlace.textContent = "";
   summaryTime.textContent = "";
@@ -366,3 +381,29 @@ function handleNewBookingClick() {
 }
 
 document.querySelector("#newBookingButton").addEventListener("click", handleNewBookingClick);
+
+// "13:00" → 13
+function toHour(time) {
+  return Number(time.slice(0, 2));
+}
+
+// 같은 날, 취소하지 않은 예약 중 지금 고른 시간과 한 시간이라도 겹치는 예약을 찾는다
+function findOverlappingBooking() {
+  const start = toHour(bookingTime.value);
+  const end = start + Number(bookingHours.value);
+
+  return myBookings.find(function (booking) {
+    if (booking.status === "취소됨" || booking.date !== bookingDate.value) {
+      return false;
+    }
+
+    const bookedStart = toHour(booking.time);
+    const bookedEnd = bookedStart + booking.hours;
+    return start < bookedEnd && bookedStart < end;
+  });
+}
+
+function clearOverlapError() {
+  overlapError.textContent = "";
+  summaryTime.classList.remove("has-error");
+}
