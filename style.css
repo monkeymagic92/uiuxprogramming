@@ -445,6 +445,129 @@ select.has-error {
   font-weight: 700;
 }
 
+/* 겹치는 예약이 있을 때 확인 화면의 날짜·시간 */
+.booking-summary dd.has-error {
+  color: #a33a2b;
+}
+
+/* 내 예약 */
+.booking-empty[hidden],
+.booking-detail[hidden] {
+  display: none;
+}
+
+.booking-empty {
+  padding: 16px;
+  border: 1px dashed #bfc9c4;
+  border-radius: 14px;
+  color: #5e6272;
+}
+
+.list-message:empty {
+  display: none;
+}
+
+.list-message.is-error,
+.list-message.is-done {
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.list-message.is-error {
+  color: #a33a2b;
+  background-color: #fbeae7;
+}
+
+.list-message.is-done {
+  color: #24503f;
+  background-color: #d6eae1;
+}
+
+.booking-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.booking-item {
+  padding: 20px 24px;
+  border: 1px solid #dde5e1;
+  border-radius: 14px;
+}
+
+.booking-item + .booking-item {
+  margin-top: 12px;
+}
+
+.booking-item-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.booking-item-head h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.booking-status {
+  padding: 2px 10px;
+  border-radius: 999px;
+  color: #ffffff;
+  background-color: #2f6b5a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.booking-item-time {
+  margin-bottom: 0;
+  color: #5e6272;
+}
+
+.booking-detail {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #eef4f1;
+}
+
+.booking-detail dd:last-child {
+  margin-bottom: 0;
+}
+
+.booking-item .step-actions {
+  margin-top: 16px;
+}
+
+/* 취소한 예약은 흐리게 두고 시간에 줄을 긋는다 */
+.booking-item.is-cancelled {
+  border-style: dashed;
+  background-color: #f6f8f7;
+}
+
+.booking-item.is-cancelled .booking-status {
+  color: #5e6272;
+  background-color: #dde5e1;
+}
+
+.booking-item.is-cancelled .booking-item-time {
+  text-decoration: line-through;
+}
+
+.secondary-button:disabled {
+  border-color: #bfc9c4;
+  color: #a3aca8;
+  background-color: transparent;
+  cursor: not-allowed;
+}
+
+#myBookings > .step-actions {
+  margin-top: 16px;
+}
+
 /* 어두운 화면 (body에 dark 클래스가 붙었을 때) */
 body.dark {
   color: #e8eeeb;
@@ -503,6 +626,43 @@ body.dark .secondary-button {
   border-color: #8cc2ad;
   color: #d6eae1;
   background-color: transparent;
+}
+
+body.dark .secondary-button:disabled {
+  border-color: #44524d;
+  color: #7d8a85;
+}
+
+body.dark .booking-summary dd.has-error,
+body.dark .list-message.is-error {
+  color: #f2a193;
+}
+
+body.dark .list-message.is-error {
+  background-color: #4a2c27;
+}
+
+body.dark .list-message.is-done {
+  color: #d6eae1;
+  background-color: #2f4a40;
+}
+
+body.dark .booking-empty,
+body.dark .booking-item {
+  border-color: #44524d;
+}
+
+body.dark .booking-detail {
+  background-color: #2c3532;
+}
+
+body.dark .booking-item.is-cancelled {
+  background-color: #1f2523;
+}
+
+body.dark .booking-item.is-cancelled .booking-status {
+  color: #c5d0cb;
+  background-color: #3a4642;
 }
 
 /* 화면 가로 폭이 768px 이하일 때만 적용 */
@@ -587,6 +747,9 @@ body.dark .secondary-button {
   }
 
   .step-actions { flex-direction: column; }
+
+  /* 내 예약: 카드 여백을 줄이고 버튼은 위 규칙대로 세로로 쌓인다 */
+  .booking-item { padding: 16px; }
 
   .secondary-button {
     width: 100%;
