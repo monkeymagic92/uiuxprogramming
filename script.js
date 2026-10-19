@@ -343,9 +343,61 @@ function makeBookingItem(booking) {
   item.querySelector(".booking-item-place").textContent = booking.area + " · " + booking.seat;
   item.querySelector(".booking-item-time").textContent =
     booking.date + " " + booking.time + "부터 " + booking.hours + "시간";
-  item.querySelector(".booking-status").textContent = booking.status;
 
+  const start = toHour(booking.time);
+  item.querySelector(".detail-name").textContent = booking.name + "님";
+  item.querySelector(".detail-range").textContent =
+    booking.time + " ~ " + formatHour(start + booking.hours);
+  item.querySelector(".detail-deadline").textContent =
+    booking.date + " " + formatHour(start - 1) + "까지";
+
+  const detail = item.querySelector(".booking-detail");
+  const detailButton = item.querySelector(".detail-button");
+  const cancelButton = item.querySelector(".cancel-button");
+
+  // click: 자세히 보기 ↔ 접기
+  detailButton.addEventListener("click", function () {
+    detail.hidden = !detail.hidden;
+    detailButton.textContent = detail.hidden ? "자세히 보기" : "접기";
+    detailButton.setAttribute("aria-expanded", String(!detail.hidden));
+  });
+
+  cancelButton.addEventListener("click", function () {
+    cancelBooking(booking, item);
+  });
+
+  showBookingStatus(booking, item);
   return item;
+}
+
+// 상태 글자, 취소 표시, 취소 버튼을 예약 상태 하나에 맞춘다
+function showBookingStatus(booking, item) {
+  const cancelled = booking.status === "취소됨";
+  const cancelButton = item.querySelector(".cancel-button");
+
+  item.querySelector(".booking-status").textContent = booking.status;
+  item.classList.toggle("is-cancelled", cancelled);
+  cancelButton.disabled = cancelled;
+  cancelButton.textContent = cancelled ? "취소 완료" : "예약 취소";
+}
+
+// click: 이용 1시간 전이 지나지 않았을 때만 취소한다
+function cancelBooking(booking, item) {
+  const place = booking.area + " " + booking.seat;
+  const when = booking.date + " " + booking.time;
+  const deadline = new Date(booking.date + "T" + formatHour(toHour(booking.time) - 1));
+
+  if (new Date() >= deadline) {
+    showListMessage(when + " " + place + " 예약은 취소 기한(이용 1시간 전)이 지나 취소할 수 없습니다. 예약 시간에 맞춰 방문해 주세요.", "is-error");
+    return;
+  }
+
+  booking.status = "취소됨";
+  showBookingStatus(booking, item);
+  showListMessage(when + " " + place + " 예약을 취소했습니다. 같은 시간에 다시 예약하려면 새로 예약하기를 눌러 주세요.", "is-done");
+
+  // 취소 버튼이 비활성화되면 포커스가 사라지므로 다음 행동 버튼으로 옮긴다
+  document.querySelector("#newBookingButton").focus();
 }
 
 function renderMyBookings() {
@@ -368,7 +420,7 @@ function showListMessage(text, type) {
 
 // click: 완료 화면에서 내 예약으로 이동해 방금 넣은 예약에 포커스를 둔다
 document.querySelector("#viewMyBookings").addEventListener("click", function () {
-  myBookingList.querySelector("button, .booking-item").focus();
+  myBookingList.querySelector(".detail-button").focus();
 });
 
 // click: 새로 예약하기. 예약 흐름을 연 적이 없으면 예약 준비부터 시작한다
@@ -385,6 +437,11 @@ document.querySelector("#newBookingButton").addEventListener("click", handleNewB
 // "13:00" → 13
 function toHour(time) {
   return Number(time.slice(0, 2));
+}
+
+// 9 → "09:00"
+function formatHour(hour) {
+  return String(hour).padStart(2, "0") + ":00";
 }
 
 // 같은 날, 취소하지 않은 예약 중 지금 고른 시간과 한 시간이라도 겹치는 예약을 찾는다
