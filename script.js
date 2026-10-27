@@ -483,7 +483,127 @@ function syncIssueFields() {
   reviewIssueInputs.forEach(function (input) {
     input.disabled = !open;
   });
+
+  // 닫은 영역의 오류가 남아 있으면 제출을 막는 이유가 사라졌으므로 같이 지운다
+  if (!open) {
+    clearFieldError(reviewIssueOptions, reviewIssueOptions, reviewIssueError);
+  }
 }
 
 reviewIssue.addEventListener("change", syncIssueFields);
 syncIssueFields();
+
+// 입력 중 상태와 오류를 표시할 요소
+const reviewArea = document.querySelector("#reviewArea");
+const reviewAreaField = document.querySelector("#reviewAreaField");
+const reviewAreaError = document.querySelector("#reviewAreaError");
+const reviewText = document.querySelector("#reviewText");
+const reviewTextField = document.querySelector("#reviewTextField");
+const reviewTextHelp = document.querySelector("#reviewTextHelp");
+const reviewTextCount = document.querySelector("#reviewTextCount");
+const reviewTextError = document.querySelector("#reviewTextError");
+
+const REVIEW_MIN = 20;
+const REVIEW_MAX = 200;
+const reviewTextHelpDefault = reviewTextHelp.textContent;
+
+// 오류는 테두리(has-error), aria-invalid, 오류 문장을 한꺼번에 켜고 끈다
+function showFieldError(box, control, errorBox, message) {
+  control.setAttribute("aria-invalid", "true");
+  errorBox.textContent = message;
+  box.classList.remove("is-valid");
+  box.classList.add("has-error");
+  return false;
+}
+
+function clearFieldError(box, control, errorBox) {
+  control.removeAttribute("aria-invalid");
+  errorBox.textContent = "";
+  box.classList.remove("has-error");
+}
+
+// input: 글자 수와 조건까지 남은 글자를 쓰는 동안 바로 보여 준다
+// 아직 쓰는 중에는 빨간 오류를 띄우지 않고 안내 문장만 바꾼다
+function updateReviewTextState() {
+  const length = reviewText.value.length;
+  const written = reviewText.value.trim().length;
+  const enough = written >= REVIEW_MIN;
+  const invalid = reviewText.getAttribute("aria-invalid") === "true";
+
+  reviewTextCount.textContent = length + " / " + REVIEW_MAX + "자";
+  reviewTextField.classList.toggle("is-valid", enough && !invalid);
+
+  if (written === 0) {
+    reviewTextHelp.textContent = reviewTextHelpDefault;
+  } else if (enough) {
+    reviewTextHelp.textContent = "등록 조건을 충족했습니다.";
+  } else {
+    reviewTextHelp.textContent = (REVIEW_MIN - written) + "자 더 쓰면 등록할 수 있습니다.";
+  }
+}
+
+function validateReviewArea() {
+  if (reviewArea.value === "") {
+    return showFieldError(reviewAreaField, reviewArea, reviewAreaError,
+      "다녀온 동네를 선택해 주세요. 목록에서 공부방이 있는 동네를 고르면 됩니다.");
+  }
+
+  clearFieldError(reviewAreaField, reviewArea, reviewAreaError);
+  return true;
+}
+
+// 빈 값과 글자 수 부족은 고치는 방법이 달라서 문장도 나눈다
+function validateReviewText() {
+  const written = reviewText.value.trim().length;
+
+  if (written === 0) {
+    return showFieldError(reviewTextField, reviewText, reviewTextError,
+      "후기 내용을 입력해 주세요.");
+  }
+
+  if (written < REVIEW_MIN) {
+    return showFieldError(reviewTextField, reviewText, reviewTextError,
+      "후기를 " + REVIEW_MIN + "자 이상 써 주세요. 지금 " + written + "자라서 "
+      + (REVIEW_MIN - written) + "자 더 필요합니다.");
+  }
+
+  clearFieldError(reviewTextField, reviewText, reviewTextError);
+  updateReviewTextState();
+  return true;
+}
+
+// 불편한 점 영역이 닫혀 있으면 검사하지 않는다
+function validateReviewIssue() {
+  const picked = reviewForm.querySelector('input[name="issue"]:checked');
+
+  if (reviewIssue.checked && !picked) {
+    return showFieldError(reviewIssueOptions, reviewIssueOptions, reviewIssueError,
+      "가장 불편했던 점을 하나 골라 주세요. 남기지 않으려면 위 체크를 해제하면 됩니다.");
+  }
+
+  clearFieldError(reviewIssueOptions, reviewIssueOptions, reviewIssueError);
+  return true;
+}
+
+// 한 번 오류가 난 칸은 값을 고치는 즉시 다시 검사해서 오류를 해제한다
+reviewText.addEventListener("input", function () {
+  updateReviewTextState();
+
+  if (reviewText.getAttribute("aria-invalid") === "true") {
+    validateReviewText();
+  }
+});
+
+reviewArea.addEventListener("change", function () {
+  if (reviewArea.getAttribute("aria-invalid") === "true") {
+    validateReviewArea();
+  }
+});
+
+reviewIssueInputs.forEach(function (input) {
+  input.addEventListener("change", function () {
+    if (reviewIssueOptions.getAttribute("aria-invalid") === "true") {
+      validateReviewIssue();
+    }
+  });
+});
