@@ -464,3 +464,26 @@ function clearOverlapError() {
   overlapError.textContent = "";
   summaryTime.classList.remove("has-error");
 }
+
+
+// 이용 후기 폼 (9주차)
+const reviewForm = document.querySelector("#reviewForm");
+const reviewIssue = document.querySelector("#reviewIssue");
+const reviewIssueOptions = document.querySelector("#reviewIssueOptions");
+const reviewIssueInputs = document.querySelectorAll('input[name="issue"]');
+const reviewIssueError = document.querySelector("#reviewIssueError");
+
+// change: 체크하면 불편한 점 영역을 열고, 해제하면 숨기면서 안의 입력도 막는다
+// disabled인 입력은 Tab으로 들어갈 수 없고 FormData에도 들어가지 않는다
+function syncIssueFields() {
+  const open = reviewIssue.checked;
+
+  reviewIssue.setAttribute("aria-expanded", String(open));
+  reviewIssueOptions.hidden = !open;
+  reviewIssueInputs.forEach(function (input) {
+    input.disabled = !open;
+  });
+}
+
+reviewIssue.addEventListener("change", syncIssueFields);
+syncIssueFields();
