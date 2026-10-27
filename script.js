@@ -607,3 +607,159 @@ reviewIssueInputs.forEach(function (input) {
     }
   });
 });
+
+// 제출 상태와 저장한 후기 목록
+const reviewSubmit = document.querySelector("#reviewSubmit");
+const reviewStatus = document.querySelector("#reviewStatus");
+const reviewList = document.querySelector("#reviewList");
+const reviewEmpty = document.querySelector("#reviewEmpty");
+
+const REVIEW_STORAGE_KEY = "dongneReviews";
+
+// 주소 끝에 ?save-error 를 붙여 열면 저장 실패 화면을 확인할 수 있다
+const forceSaveFailure = new URLSearchParams(location.search).has("save-error");
+
+// 새로고침해도 남도록 브라우저 저장소(localStorage)에서 불러온다
+function loadReviews() {
+  try {
+    return JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY)) || [];
+  } catch (error) {
+    return [];
+  }
+}
+
+const reviews = loadReviews();
+
+function renderReviews() {
+  reviewList.innerHTML = "";
+  reviewEmpty.hidden = reviews.length > 0;
+
+  reviews.forEach(function (review) {
+    const item = document.createElement("li");
+    const head = document.createElement("p");
+    const body = document.createElement("p");
+
+    item.className = "review-item";
+    head.className = "review-item-head";
+    head.textContent = review.area + " · " + review.seat;
+    body.textContent = review.text;
+    item.append(head, body);
+
+    const sub = document.createElement("p");
+    sub.className = "review-item-sub";
+    sub.textContent = review.date + (review.issue ? " · 불편했던 점: " + review.issue : "");
+    item.append(sub);
+
+    reviewList.appendChild(item);
+  });
+}
+
+renderReviews();
+
+// 상태 문구. type은 is-error, is-done 중 하나이거나 빈 값
+function showReviewStatus(text, type) {
+  reviewStatus.textContent = text;
+  reviewStatus.classList.toggle("is-error", type === "is-error");
+  reviewStatus.classList.toggle("is-done", type === "is-done");
+}
+
+// 저장하는 동안 버튼을 잠가 두 번 눌러도 한 번만 저장되게 한다
+function setReviewSaving(saving) {
+  reviewForm.setAttribute("aria-busy", String(saving));
+  reviewSubmit.disabled = saving;
+  reviewSubmit.textContent = saving ? "등록하는 중…" : "후기 등록하기";
+}
+
+function wait(milliseconds) {
+  return new Promise(function (resolve) {
+    window.setTimeout(resolve, milliseconds);
+  });
+}
+
+// 서버가 없으니 잠깐 기다린 뒤 브라우저 저장소에 저장한다
+async function saveReview(review) {
+  await wait(800);
+
+  if (forceSaveFailure) {
+    throw new Error("저장 실패 확인용");
+  }
+
+  reviews.unshift(review);
+  try {
+    localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(reviews));
+  } catch (error) {
+    reviews.shift();
+    throw error;
+  }
+}
+
+// 입력값, 안내·오류 문장, 조건부 영역, 버튼 상태를 처음으로 되돌린다
+function resetReviewForm() {
+  reviewForm.reset();
+  syncIssueFields();
+
+  clearFieldError(reviewAreaField, reviewArea, reviewAreaError);
+  clearFieldError(reviewTextField, reviewText, reviewTextError);
+  updateReviewTextState();
+
+  setReviewSaving(false);
+  showReviewStatus("", "");
+}
+
+// submit: 버튼 클릭과 입력칸에서 Enter 모두 여기로 들어온다
+async function handleReviewSubmit(event) {
+  event.preventDefault();
+
+  if (reviewForm.getAttribute("aria-busy") === "true") {
+    return;
+  }
+
+  // 오류를 모두 보여 주려고 하나가 틀려도 나머지까지 검사한다
+  const results = [validateReviewArea(), validateReviewText(), validateReviewIssue()];
+  const errorCount = results.filter(function (ok) { return !ok; }).length;
+
+  if (errorCount > 0) {
+    showReviewStatus("고칠 항목이 " + errorCount + "개 있습니다. 붉게 표시된 안내를 보고 고친 뒤 다시 등록해 주세요.", "is-error");
+
+    // 첫 오류 칸으로 이동한다. 라디오 묶음이면 첫 선택지로
+    const firstError = reviewForm.querySelector('[aria-invalid="true"]');
+    if (firstError === reviewIssueOptions) {
+      reviewIssueInputs[0].focus();
+    } else {
+      firstError.focus();
+    }
+    return;
+  }
+
+  // 닫힌 영역의 라디오는 disabled라 FormData에 issue가 들어가지 않는다
+  const data = new FormData(reviewForm);
+  const review = {
+    area: data.get("area"),
+    seat: data.get("seat"),
+    text: String(data.get("text")).trim(),
+    issue: data.get("issue"),
+    date: new Date().toISOString().slice(0, 10)
+  };
+
+  setReviewSaving(true);
+  showReviewStatus("후기를 등록하고 있습니다. 잠시만 기다려 주세요.", "");
+
+  try {
+    await saveReview(review);
+    renderReviews();
+    resetReviewForm();
+    showReviewStatus(review.area + " " + review.seat + " 후기를 등록했습니다. 아래 최근 후기 맨 위에서 확인할 수 있습니다.", "is-done");
+  } catch (error) {
+    // 실패하면 쓴 내용은 그대로 두고 버튼만 다시 쓸 수 있게 푼다
+    setReviewSaving(false);
+    showReviewStatus("후기를 등록하지 못했습니다. 쓴 내용은 그대로 두었으니 후기 등록하기를 다시 눌러 주세요.", "is-error");
+  }
+}
+
+reviewForm.addEventListener("submit", handleReviewSubmit);
+
+// click: 처음부터 다시 쓰기
+document.querySelector("#reviewReset").addEventListener("click", function () {
+  resetReviewForm();
+  reviewArea.focus();
+});
