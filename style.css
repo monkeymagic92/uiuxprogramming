@@ -674,6 +674,16 @@ select.has-error {
   display: none;
 }
 
+/* legend가 테두리 위에 걸치지 않고 상자 안에 들어오게 한다 */
+.issue-options legend {
+  float: left;
+  width: 100%;
+}
+
+.issue-options .inline-options {
+  clear: both;
+}
+
 /* 조건 충족: 초록 테두리 + 안내 문장 */
 .field.is-valid textarea {
   border-color: #2f6b5a;
@@ -831,6 +841,39 @@ body.dark .booking-item.is-cancelled .booking-status {
   background-color: #3a4642;
 }
 
+/* 이용 후기 폼: 문단 색은 body.dark p보다 우선하게 클래스를 붙여 지정 */
+body.dark .field-error {
+  color: #f2a193;
+}
+
+body.dark .field-help,
+body.dark .field-meta p,
+body.dark .review-item .review-item-sub {
+  color: #a9b6b0;
+}
+
+body.dark .field.is-valid #reviewTextHelp {
+  color: #8cc2ad;
+}
+
+body.dark .required {
+  color: #d6eae1;
+  background-color: #2f4a40;
+}
+
+body.dark .issue-options {
+  border-color: #2f4a40;
+  background-color: #2f4a40;
+}
+
+body.dark .issue-options.has-error {
+  border-color: #f2a193;
+}
+
+body.dark .review-item {
+  border-color: #44524d;
+}
+
 /* 화면 가로 폭이 768px 이하일 때만 적용 */
 @media (max-width: 768px) {
   body { font-size: 16px; }
@@ -916,6 +959,14 @@ body.dark .booking-item.is-cancelled .booking-status {
 
   /* 내 예약: 카드 여백을 줄이고 버튼은 위 규칙대로 세로로 쌓인다 */
   .booking-item { padding: 16px; }
+
+  /* 이용 후기 폼: 안내와 글자 수를 위아래로 */
+  .field-meta {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .review-item { padding: 16px; }
 
   .secondary-button {
     width: 100%;
