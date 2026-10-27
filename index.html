@@ -25,6 +25,7 @@
       <a href="#steps">이용 방법</a>
       <a href="#prepare">예약 준비</a>
       <a href="#myBookings">내 예약</a>
+      <a href="#writeReview">후기 쓰기</a>
       <a href="#subscribe">소식 받기</a>
     </nav>
   </header>
@@ -287,6 +288,94 @@
           </div>
         </li>
       </template>
+    </section>
+
+    <!--
+    9주차 입력 폼
+    사용자 행동: 다녀온 공부방의 후기를 남긴다. 불편했던 점이 있으면 항목 하나를 골라 같이 남긴다.
+    입력 조건: 동네 필수, 후기 20~200자, 불편했던 점을 남기기로 했으면 항목 하나 필수
+    -->
+    <section id="writeReview" class="content-section">
+      <h2>이용 후기 쓰기</h2>
+      <p>다녀온 공부방이 어땠는지 남겨 주세요. 다음 사람이 자리를 고를 때 참고합니다.</p>
+
+      <form id="reviewForm" class="review-form" novalidate aria-busy="false">
+        <div class="field" id="reviewAreaField">
+          <label for="reviewArea">다녀온 동네 <span class="required">필수</span></label>
+          <select id="reviewArea" name="area" required aria-describedby="reviewAreaHelp reviewAreaError">
+            <option value="">동네를 선택하세요</option>
+            <option value="망원동">망원동</option>
+            <option value="연남동">연남동</option>
+            <option value="합정동">합정동</option>
+            <option value="성산동">성산동</option>
+          </select>
+          <p id="reviewAreaHelp" class="field-help">후기는 동네별로 모아서 보여 줍니다.</p>
+          <p id="reviewAreaError" class="field-error" role="alert"></p>
+        </div>
+
+        <fieldset class="field">
+          <legend>이용한 자리</legend>
+          <div class="inline-options">
+            <label><input type="radio" name="seat" value="1인석" checked> 1인석</label>
+            <label><input type="radio" name="seat" value="스터디룸"> 스터디룸</label>
+          </div>
+        </fieldset>
+
+        <div class="field" id="reviewTextField">
+          <label for="reviewText">후기 내용 <span class="required">필수</span></label>
+          <textarea
+            id="reviewText"
+            name="text"
+            rows="4"
+            minlength="20"
+            maxlength="200"
+            required
+            placeholder="예: 창가 자리가 밝고 조용했어요. 콘센트는 자리마다 하나씩 있어요."
+            aria-describedby="reviewTextHelp reviewTextCount reviewTextError"
+          ></textarea>
+          <div class="field-meta">
+            <p id="reviewTextHelp">소음, 조명, 콘센트처럼 직접 앉아 봐야 아는 내용을 20자 이상 써 주세요.</p>
+            <p id="reviewTextCount" aria-live="polite">0 / 200자</p>
+          </div>
+          <p id="reviewTextError" class="field-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label class="agree-row" for="reviewIssue">
+            <input
+              id="reviewIssue"
+              name="hasIssue"
+              type="checkbox"
+              value="yes"
+              aria-controls="reviewIssueOptions"
+              aria-expanded="false"
+            >
+            불편했던 점도 같이 남길게요
+          </label>
+
+          <fieldset id="reviewIssueOptions" class="issue-options" hidden aria-describedby="reviewIssueError">
+            <legend>가장 불편했던 점 <span class="required">필수</span></legend>
+            <div class="inline-options">
+              <label><input type="radio" name="issue" value="소음" disabled> 소음</label>
+              <label><input type="radio" name="issue" value="조명" disabled> 조명</label>
+              <label><input type="radio" name="issue" value="콘센트" disabled> 콘센트</label>
+              <label><input type="radio" name="issue" value="냉난방" disabled> 냉난방</label>
+            </div>
+            <p id="reviewIssueError" class="field-error" role="alert"></p>
+          </fieldset>
+        </div>
+
+        <p id="reviewStatus" class="list-message" role="status" aria-live="polite"></p>
+
+        <div class="step-actions">
+          <button class="primary-button" id="reviewSubmit" type="submit">후기 등록하기</button>
+          <button class="secondary-button" id="reviewReset" type="button">처음부터 다시 쓰기</button>
+        </div>
+      </form>
+
+      <h3 class="review-list-title">최근 후기</h3>
+      <p id="reviewEmpty" class="booking-empty">아직 등록한 후기가 없습니다. 첫 후기를 남겨 주세요.</p>
+      <ul id="reviewList" class="review-list"></ul>
     </section>
 
     <section id="subscribe" class="content-section subscribe-section">
