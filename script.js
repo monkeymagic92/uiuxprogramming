@@ -490,7 +490,10 @@ function syncIssueFields() {
   }
 }
 
-reviewIssue.addEventListener("change", syncIssueFields);
+reviewIssue.addEventListener("change", function () {
+  syncIssueFields();
+  clearReviewStatusIfFixed();
+});
 syncIssueFields();
 
 // 입력 중 상태와 오류를 표시할 요소
@@ -585,18 +588,40 @@ function validateReviewIssue() {
   return true;
 }
 
+// 제출 때 띄운 "고칠 항목" 문구를 남은 오류 수에 맞춘다. 다 고치면 내린다
+// 저장 실패 문구는 건드리지 않도록 "고칠 항목" 문구일 때만 바꾼다
+function clearReviewStatusIfFixed() {
+  if (reviewStatus.dataset.kind !== "count") {
+    return;
+  }
+
+  const left = reviewForm.querySelectorAll('[aria-invalid="true"]').length;
+  if (left === 0) {
+    showReviewStatus("", "");
+  } else {
+    showReviewStatus(makeErrorCountMessage(left), "is-error");
+    reviewStatus.dataset.kind = "count";
+  }
+}
+
+function makeErrorCountMessage(count) {
+  return "고칠 항목이 " + count + "개 있습니다. 붉게 표시된 안내를 보고 고친 뒤 다시 등록해 주세요.";
+}
+
 // 한 번 오류가 난 칸은 값을 고치는 즉시 다시 검사해서 오류를 해제한다
 reviewText.addEventListener("input", function () {
   updateReviewTextState();
 
   if (reviewText.getAttribute("aria-invalid") === "true") {
     validateReviewText();
+    clearReviewStatusIfFixed();
   }
 });
 
 reviewArea.addEventListener("change", function () {
   if (reviewArea.getAttribute("aria-invalid") === "true") {
     validateReviewArea();
+    clearReviewStatusIfFixed();
   }
 });
 
@@ -604,6 +629,7 @@ reviewIssueInputs.forEach(function (input) {
   input.addEventListener("change", function () {
     if (reviewIssueOptions.getAttribute("aria-invalid") === "true") {
       validateReviewIssue();
+      clearReviewStatusIfFixed();
     }
   });
 });
@@ -661,6 +687,7 @@ function showReviewStatus(text, type) {
   reviewStatus.textContent = text;
   reviewStatus.classList.toggle("is-error", type === "is-error");
   reviewStatus.classList.toggle("is-done", type === "is-done");
+  reviewStatus.dataset.kind = "";
 }
 
 // 저장하는 동안 버튼을 잠가 두 번 눌러도 한 번만 저장되게 한다
@@ -719,7 +746,8 @@ async function handleReviewSubmit(event) {
   const errorCount = results.filter(function (ok) { return !ok; }).length;
 
   if (errorCount > 0) {
-    showReviewStatus("고칠 항목이 " + errorCount + "개 있습니다. 붉게 표시된 안내를 보고 고친 뒤 다시 등록해 주세요.", "is-error");
+    showReviewStatus(makeErrorCountMessage(errorCount), "is-error");
+    reviewStatus.dataset.kind = "count";
 
     // 첫 오류 칸으로 이동한다. 라디오 묶음이면 첫 선택지로
     const firstError = reviewForm.querySelector('[aria-invalid="true"]');
