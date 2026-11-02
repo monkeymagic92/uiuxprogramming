@@ -341,8 +341,34 @@ const myBookingsEmpty = document.querySelector("#myBookingsEmpty");
 const myBookingsMessage = document.querySelector("#myBookingsMessage");
 const bookingItemTemplate = document.querySelector("#bookingItemTemplate");
 
-const myBookings = [];
+// 10주차: 필터로 다시 볼 수 있게 후기처럼 브라우저 저장소에 남긴다
+const BOOKING_STORAGE_KEY = "dongneBookings";
+
+function loadBookings() {
+  try {
+    return JSON.parse(localStorage.getItem(BOOKING_STORAGE_KEY)) || [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveBookings() {
+  try {
+    localStorage.setItem(BOOKING_STORAGE_KEY, JSON.stringify(myBookings));
+  } catch (error) {
+    // 저장소가 막혀 있어도 지금 화면의 목록은 그대로 쓴다
+  }
+}
+
+const myBookings = loadBookings();
+
+// 저장된 예약 중 가장 큰 번호 다음부터 매긴다
 let nextBookingId = 1;
+myBookings.forEach(function (booking) {
+  if (booking.id >= nextBookingId) {
+    nextBookingId = booking.id + 1;
+  }
+});
 
 // 지금 예약 흐름에 들어 있는 값으로 예약 하나를 만들어 맨 앞에 넣는다
 function addMyBooking() {
@@ -357,6 +383,7 @@ function addMyBooking() {
     status: "예약됨"
   });
   nextBookingId = nextBookingId + 1;
+  saveBookings();
 
   showListMessage("", "");
   renderMyBookings();
@@ -419,6 +446,7 @@ function cancelBooking(booking, item) {
   }
 
   booking.status = "취소됨";
+  saveBookings();
   showBookingStatus(booking, item);
   showListMessage(when + " " + place + " 예약을 취소했습니다. 같은 시간에 다시 예약하려면 새로 예약하기를 눌러 주세요.", "is-done");
 
@@ -463,6 +491,9 @@ function handleNewBookingClick() {
 }
 
 document.querySelector("#newBookingButton").addEventListener("click", handleNewBookingClick);
+
+// 저장해 둔 예약으로 처음 목록을 그린다
+renderMyBookings();
 
 // "13:00" → 13
 function toHour(time) {
