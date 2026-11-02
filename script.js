@@ -27,6 +27,27 @@ function updateCurrentNav() {
 window.addEventListener("hashchange", updateCurrentNav);
 updateCurrentNav();
 
+// 모바일 메뉴: 실제로 열렸는지(is-open) 하나로 버튼 문구와 aria-expanded를 맞춘다
+const menuToggle = document.querySelector("#menuToggle");
+const siteNav = document.querySelector("#siteNav");
+
+function setMenuOpen(open) {
+  siteNav.classList.toggle("is-open", open);
+  menuToggle.textContent = open ? "메뉴 닫기" : "메뉴 열기";
+  menuToggle.setAttribute("aria-expanded", String(open));
+}
+
+menuToggle.addEventListener("click", function () {
+  setMenuOpen(!siteNav.classList.contains("is-open"));
+});
+
+// 목적지를 고르면 메뉴를 닫는다. 넓은 화면에서는 is-open이 없어도 보이므로 영향 없다
+navLinks.forEach(function (link) {
+  link.addEventListener("click", function () {
+    setMenuOpen(false);
+  });
+});
+
 // 바꿀 요소를 id로 찾는다
 const subscribeForm = document.querySelector(".subscribe-form");
 const emailInput = document.querySelector("#email");
