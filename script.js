@@ -386,7 +386,8 @@ function addMyBooking() {
   saveBookings();
 
   showListMessage("", "");
-  renderMyBookings();
+  // 취소됨만 보고 있었어도 방금 확정한 예약이 보이게 전체로 돌린다
+  setBookingFilter("all");
 }
 
 // 템플릿을 복사해 예약 한 건의 목록 줄을 만든다
@@ -448,22 +449,76 @@ function cancelBooking(booking, item) {
   booking.status = "취소됨";
   saveBookings();
   showBookingStatus(booking, item);
+
+  // 예약됨만 보고 있으면 취소한 카드는 목록에서 빠져야 하므로 다시 그린다
+  if (currentFilter !== "all") {
+    renderMyBookings();
+  }
   showListMessage(when + " " + place + " 예약을 취소했습니다. 같은 시간에 다시 예약하려면 새로 예약하기를 눌러 주세요.", "is-done");
 
   // 취소 버튼이 비활성화되면 포커스가 사라지므로 다음 행동 버튼으로 옮긴다
   document.querySelector("#newBookingButton").focus();
 }
 
+// 내 예약 필터 (10주차)
+const filterButtons = document.querySelectorAll(".filter-button");
+const myBookingsCount = document.querySelector("#myBookingsCount");
+const filterNames = { all: "전체", booked: "예약됨", cancelled: "취소됨" };
+const emptyAllText = myBookingsEmpty.textContent;
+
+// all: 전체, booked: 취소하지 않은 예약, cancelled: 취소한 예약
+let currentFilter = "all";
+
+function getVisibleBookings() {
+  return myBookings.filter(function (booking) {
+    if (currentFilter === "all") return true;
+    if (currentFilter === "cancelled") return booking.status === "취소됨";
+    return booking.status !== "취소됨";
+  });
+}
+
 function renderMyBookings() {
+  const visibleBookings = getVisibleBookings();
+
   myBookingList.innerHTML = "";
+  myBookingsEmpty.hidden = visibleBookings.length > 0;
+  myBookingList.hidden = visibleBookings.length === 0;
 
-  // 예약이 하나도 없을 때만 빈 목록 안내를 보여 준다
-  myBookingsEmpty.hidden = myBookings.length > 0;
+  // 예약이 아예 없을 때와, 고른 상태에만 없을 때 안내를 다르게 한다
+  if (visibleBookings.length === 0) {
+    myBookingsEmpty.textContent = myBookings.length === 0
+      ? emptyAllText
+      : filterNames[currentFilter] + " 상태인 예약이 없습니다. 다른 상태를 눌러 보세요. 확정한 예약은 모두 "
+        + myBookings.length + "건입니다.";
+  }
 
-  myBookings.forEach(function (booking) {
+  myBookingsCount.textContent = currentFilter === "all"
+    ? "전체 " + myBookings.length + "건"
+    : filterNames[currentFilter] + " " + visibleBookings.length + "건 / 전체 " + myBookings.length + "건";
+
+  visibleBookings.forEach(function (booking) {
     myBookingList.appendChild(makeBookingItem(booking));
   });
 }
+
+// 누른 버튼 하나만 선택 표시(is-active, aria-pressed)하고 목록을 다시 그린다
+function setBookingFilter(filter) {
+  currentFilter = filter;
+
+  filterButtons.forEach(function (button) {
+    const selected = button.dataset.filter === filter;
+    button.classList.toggle("is-active", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+
+  renderMyBookings();
+}
+
+filterButtons.forEach(function (button) {
+  button.addEventListener("click", function () {
+    setBookingFilter(button.dataset.filter);
+  });
+});
 
 // 목록 위 안내 문구. type은 is-error, is-done 중 하나이거나 빈 값
 function showListMessage(text, type) {
