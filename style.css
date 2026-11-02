@@ -49,13 +49,18 @@ h3 { margin-bottom: 10px; font-size: 20px; }
   font-size: 18px;
 }
 
-.site-nav {
+/* 메뉴는 ul을 가로로 놓는다 */
+.site-nav ul {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .site-nav a {
+  display: block;
   padding: 10px 14px;
   border-radius: 8px;
   font-weight: 700;
@@ -903,7 +908,7 @@ body.dark .review-item {
   }
 
   /* 가로로 붙어 있던 메뉴를 위에서 아래로 */
-  .site-nav {
+  .site-nav ul {
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
