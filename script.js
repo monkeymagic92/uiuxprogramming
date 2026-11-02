@@ -1,6 +1,32 @@
 // 파일이 연결됐는지 확인
 console.log("JavaScript가 연결되었습니다.");
 
+// 주요 메뉴 (10주차): 주소의 # 값과 같은 메뉴 하나만 현재 위치로 표시한다
+const navLinks = document.querySelectorAll(".site-nav a");
+
+function updateCurrentNav() {
+  const currentHash = window.location.hash;
+
+  navLinks.forEach(function (link) {
+    // #가 없으면 맨 위(서비스 소개)를 보고 있는 것이므로 첫 메뉴
+    const current = currentHash
+      ? link.getAttribute("href") === currentHash
+      : link === navLinks[0];
+
+    link.classList.toggle("is-current", current);
+
+    if (current) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+}
+
+// 메뉴 클릭, 뒤로 가기·앞으로 가기 모두 주소의 #가 바뀌면 hashchange가 일어난다
+window.addEventListener("hashchange", updateCurrentNav);
+updateCurrentNav();
+
 // 바꿀 요소를 id로 찾는다
 const subscribeForm = document.querySelector(".subscribe-form");
 const emailInput = document.querySelector("#email");
@@ -419,12 +445,16 @@ function showListMessage(text, type) {
 }
 
 // click: 완료 화면에서 내 예약으로 이동해 방금 넣은 예약에 포커스를 둔다
+// 주소도 #myBookings로 바꿔서 메뉴의 현재 위치가 따라오게 한다
 document.querySelector("#viewMyBookings").addEventListener("click", function () {
+  location.hash = "#myBookings";
   myBookingList.querySelector(".detail-button").focus();
 });
 
 // click: 새로 예약하기. 예약 흐름을 연 적이 없으면 예약 준비부터 시작한다
 function handleNewBookingClick() {
+  location.hash = "#prepare";
+
   if (bookingFlow.hidden) {
     userNameInput.focus();
     return;

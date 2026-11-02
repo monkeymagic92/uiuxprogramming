@@ -212,6 +212,13 @@ input[type="text"] {
   outline-offset: 3px;
 }
 
+/* 지금 보고 있는 메뉴: 배경 + 아래 막대로 구분한다 (hover보다 뒤에 둔다) */
+.site-nav a.is-current {
+  color: #24503f;
+  background-color: #e3efe9;
+  box-shadow: inset 0 -3px 0 #2f6b5a;
+}
+
 input[type="email"]:focus,
 input[type="text"]:focus {
   border-color: #2f6b5a;
@@ -762,6 +769,12 @@ body.dark p {
 body.dark .content-section {
   border-color: #3a4642;
   background-color: #232a27;
+}
+
+body.dark .site-nav a.is-current {
+  color: #d6eae1;
+  background-color: #2f4a40;
+  box-shadow: inset 0 -3px 0 #8cc2ad;
 }
 
 body.dark .interaction-item,
