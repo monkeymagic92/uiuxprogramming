@@ -121,7 +121,7 @@ h3 { margin-bottom: 10px; font-size: 20px; }
   background-color: #e3efe9;
 }
 
-.tab:focus { outline: 3px solid #a8ccbd; outline-offset: 3px; }
+.tab:focus { outline: 3px solid #2f6b5a; outline-offset: 3px; }
 
 /* 선택된 탭은 hover보다 뒤에 둬서 색이 유지되게 한다 */
 .tab.is-active {
@@ -199,7 +199,8 @@ input[type="text"] {
 .site-footer {
   padding-top: 24px;
   padding-bottom: 48px;
-  color: #747786;
+  /* 11주차: #747786은 배경 대비 4.17:1이라 보조 글자색(5.68:1)으로 맞춘다 */
+  color: #5e6272;
   font-size: 14px;
 }
 
@@ -213,7 +214,7 @@ input[type="text"] {
 }
 
 .site-nav a:focus {
-  outline: 3px solid #a8ccbd;
+  outline: 3px solid #2f6b5a;
   outline-offset: 3px;
 }
 
@@ -227,7 +228,7 @@ input[type="text"] {
 input[type="email"]:focus,
 input[type="text"]:focus {
   border-color: #2f6b5a;
-  outline: 3px solid #cfe4da;
+  outline: 3px solid #2f6b5a;
   outline-offset: 2px;
 }
 
@@ -236,7 +237,7 @@ input[type="text"]:focus {
 }
 
 .primary-button:hover { background-color: #24503f; }
-.primary-button:focus { outline: 3px solid #a8ccbd; outline-offset: 3px; }
+.primary-button:focus { outline: 3px solid #2f6b5a; outline-offset: 3px; }
 .primary-button:active { transform: translateY(1px); }
 
 /* 알림 신청 결과 문구 */
@@ -382,7 +383,7 @@ input[type="email"]:disabled {
 .booking-step select:focus,
 .booking-step input[type="date"]:focus {
   border-color: #2f6b5a;
-  outline: 3px solid #cfe4da;
+  outline: 3px solid #2f6b5a;
   outline-offset: 2px;
 }
 
@@ -414,7 +415,7 @@ input[type="email"]:disabled {
 }
 
 .secondary-button:hover { background-color: #e3efe9; }
-.secondary-button:focus { outline: 3px solid #a8ccbd; outline-offset: 3px; }
+.secondary-button:focus { outline: 3px solid #2f6b5a; outline-offset: 3px; }
 
 .booking-summary {
   margin: 0;
@@ -609,7 +610,7 @@ select.has-error {
   background-color: #e3efe9;
 }
 
-.filter-button:focus { outline: 3px solid #a8ccbd; outline-offset: 3px; }
+.filter-button:focus { outline: 3px solid #2f6b5a; outline-offset: 3px; }
 
 .filter-button.is-active {
   color: #ffffff;
@@ -673,7 +674,7 @@ select.has-error {
 .review-form textarea:focus,
 .inline-options input:focus {
   border-color: #2f6b5a;
-  outline: 3px solid #cfe4da;
+  outline: 3px solid #2f6b5a;
   outline-offset: 2px;
 }
 
@@ -809,6 +810,11 @@ body.dark {
 
 body.dark p {
   color: #c5d0cb;
+}
+
+/* 11주차: 진한 초록 초점 외곽선은 어두운 배경에서 안 보여서 밝은 초록으로 바꾼다 */
+body.dark :focus {
+  outline-color: #8cc2ad;
 }
 
 body.dark .content-section {
