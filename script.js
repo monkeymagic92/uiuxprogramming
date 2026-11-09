@@ -22,6 +22,11 @@ function updateCurrentNav() {
       link.removeAttribute("aria-current");
     }
   });
+
+  // 11주차: 브라우저 탭 제목에도 지금 보고 있는 메뉴 이름을 넣는다
+  const currentLink = document.querySelector('.site-nav a[aria-current="page"]');
+  const pageName = currentLink ? currentLink.textContent.trim() : "서비스 소개";
+  document.title = pageName + " | 동네공부방";
 }
 
 // 메뉴 클릭, 뒤로 가기·앞으로 가기 모두 주소의 #가 바뀌면 hashchange가 일어난다
