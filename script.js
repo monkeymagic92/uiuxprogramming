@@ -440,6 +440,13 @@ function addMyBooking() {
   setBookingFilter("all");
 }
 
+// 11주차: 카드마다 버튼 글자가 같아서 버튼 이름 앞에 어떤 예약인지 붙인다
+// 예) "망원동 1인석 2026-11-20 10:00 예약 취소"
+function nameBookingButton(button, booking) {
+  button.setAttribute("aria-label",
+    booking.area + " " + booking.seat + " " + booking.date + " " + booking.time + " " + button.textContent);
+}
+
 // 템플릿을 복사해 예약 한 건의 목록 줄을 만든다
 function makeBookingItem(booking) {
   const item = bookingItemTemplate.content.firstElementChild.cloneNode(true);
@@ -464,7 +471,9 @@ function makeBookingItem(booking) {
     detail.hidden = !detail.hidden;
     detailButton.textContent = detail.hidden ? "자세히 보기" : "접기";
     detailButton.setAttribute("aria-expanded", String(!detail.hidden));
+    nameBookingButton(detailButton, booking);
   });
+  nameBookingButton(detailButton, booking);
 
   cancelButton.addEventListener("click", function () {
     cancelBooking(booking, item);
@@ -483,6 +492,7 @@ function showBookingStatus(booking, item) {
   item.classList.toggle("is-cancelled", cancelled);
   cancelButton.disabled = cancelled;
   cancelButton.textContent = cancelled ? "취소 완료" : "예약 취소";
+  nameBookingButton(cancelButton, booking);
 }
 
 // click: 이용 1시간 전이 지나지 않았을 때만 취소한다
