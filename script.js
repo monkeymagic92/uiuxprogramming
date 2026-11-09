@@ -92,9 +92,11 @@ function subscribe(event) {
     // 비어 있으면 경고 스타일만 주고 다시 입력을 기다린다
     subscribeMessage.classList.remove("is-done");
     subscribeMessage.classList.add("is-error");
+    emailInput.setAttribute("aria-invalid", "true");
     emailInput.focus();
   } else {
     isSubscribed = true;
+    emailInput.removeAttribute("aria-invalid");
     subscribeMessage.classList.remove("is-error");
     subscribeMessage.classList.add("is-done");
 
@@ -224,12 +226,14 @@ function handleStartClick() {
   if (userNameInput.value.trim() === "") {
     userNameError.textContent = "예약자 이름을 입력해 주세요. 확인 화면에 이 이름이 들어갑니다.";
     userNameInput.classList.add("has-error");
+    userNameInput.setAttribute("aria-invalid", "true");
     userNameInput.focus();
     return;
   }
 
   userNameError.textContent = "";
   userNameInput.classList.remove("has-error");
+  userNameInput.removeAttribute("aria-invalid");
 
   bookingFlow.hidden = false;
   showBookingStep(1);
@@ -248,12 +252,14 @@ function handleNext1Click() {
   if (bookingArea.value === "") {
     areaError.textContent = "동네를 선택해 주세요. 목록에서 가까운 동네를 고르면 됩니다.";
     bookingArea.classList.add("has-error");
+    bookingArea.setAttribute("aria-invalid", "true");
     bookingArea.focus();
     return;
   }
 
   areaError.textContent = "";
   bookingArea.classList.remove("has-error");
+  bookingArea.removeAttribute("aria-invalid");
   showBookingStep(2);
 }
 
@@ -268,6 +274,9 @@ function handleNext2Click() {
       : "시작 시간을 선택해 주세요.";
     bookingDate.classList.toggle("has-error", missingDate);
     bookingTime.classList.toggle("has-error", missingTime);
+    // 11주차: 테두리 색만이 아니라 aria-invalid로도 어느 칸이 잘못됐는지 알린다
+    bookingDate.setAttribute("aria-invalid", String(missingDate));
+    bookingTime.setAttribute("aria-invalid", String(missingTime));
 
     if (missingDate) {
       bookingDate.focus();
@@ -280,6 +289,8 @@ function handleNext2Click() {
   timeError.textContent = "";
   bookingDate.classList.remove("has-error");
   bookingTime.classList.remove("has-error");
+  bookingDate.removeAttribute("aria-invalid");
+  bookingTime.removeAttribute("aria-invalid");
   clearOverlapError();
   fillSummary();
   showBookingStep(3);
@@ -357,6 +368,9 @@ function handleRestartClick() {
   bookingArea.classList.remove("has-error");
   bookingDate.classList.remove("has-error");
   bookingTime.classList.remove("has-error");
+  bookingArea.removeAttribute("aria-invalid");
+  bookingDate.removeAttribute("aria-invalid");
+  bookingTime.removeAttribute("aria-invalid");
 
   seatHelp.hidden = true;
   clearOverlapError();
