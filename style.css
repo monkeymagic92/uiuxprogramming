@@ -602,6 +602,14 @@ select.has-error {
   cursor: not-allowed;
 }
 
+#showAllBookings {
+  margin-top: 12px;
+}
+
+#showAllBookings[hidden] {
+  display: none;
+}
+
 #myBookings > .step-actions {
   margin-top: 16px;
 }

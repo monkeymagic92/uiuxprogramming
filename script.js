@@ -516,8 +516,14 @@ function cancelBooking(booking, item) {
   }
   showListMessage(when + " " + place + " 예약을 취소했습니다. 같은 시간에 다시 예약하려면 새로 예약하기를 눌러 주세요.", "is-done");
 
-  // 취소 버튼이 비활성화되면 포커스가 사라지므로 다음 행동 버튼으로 옮긴다
-  document.querySelector("#newBookingButton").focus();
+  // 취소 버튼이 비활성화되면 포커스가 사라지므로 옮겨 준다 (11주차에 바꿈)
+  // 전체 보기면 카드가 그대로 남아 있으니 그 카드의 자세히 보기로,
+  // 예약됨만 보고 있었으면 카드가 목록에서 빠지므로 선택된 필터 버튼으로
+  if (currentFilter === "all") {
+    item.querySelector(".detail-button").focus();
+  } else {
+    document.querySelector('.filter-button[aria-pressed="true"]').focus();
+  }
 }
 
 // 내 예약 필터 (10주차)
@@ -525,6 +531,7 @@ const filterButtons = document.querySelectorAll(".filter-button");
 const myBookingsCount = document.querySelector("#myBookingsCount");
 const filterNames = { all: "전체", booked: "예약됨", cancelled: "취소됨" };
 const emptyAllText = myBookingsEmpty.textContent;
+const showAllBookings = document.querySelector("#showAllBookings");
 
 // all: 전체, booked: 취소하지 않은 예약, cancelled: 취소한 예약
 let currentFilter = "all";
@@ -543,13 +550,15 @@ function renderMyBookings() {
   myBookingList.innerHTML = "";
   myBookingsEmpty.hidden = visibleBookings.length > 0;
   myBookingList.hidden = visibleBookings.length === 0;
+  // 예약은 있는데 고른 상태에만 없을 때만 전체 보기를 보여 준다. 예약이 아예 없으면 새로 예약하기가 다음 행동
+  showAllBookings.hidden = !(visibleBookings.length === 0 && myBookings.length > 0);
 
   // 예약이 아예 없을 때와, 고른 상태에만 없을 때 안내를 다르게 한다
   if (visibleBookings.length === 0) {
     myBookingsEmpty.textContent = myBookings.length === 0
       ? emptyAllText
-      : filterNames[currentFilter] + " 상태인 예약이 없습니다. 다른 상태를 눌러 보세요. 확정한 예약은 모두 "
-        + myBookings.length + "건입니다.";
+      : filterNames[currentFilter] + " 상태인 예약이 없습니다. 확정한 예약은 모두 "
+        + myBookings.length + "건이고, 아래 전체 보기를 누르면 모두 볼 수 있습니다.";
   }
 
   myBookingsCount.textContent = currentFilter === "all"
@@ -578,6 +587,13 @@ filterButtons.forEach(function (button) {
   button.addEventListener("click", function () {
     setBookingFilter(button.dataset.filter);
   });
+});
+
+// 11주차 click: 빈 결과에서 전체 보기를 누르면 전체 필터로 돌리고 초점도 전체 버튼으로 옮긴다
+// (전체 보기 버튼이 다시 숨겨지므로 초점이 사라지지 않게)
+showAllBookings.addEventListener("click", function () {
+  setBookingFilter("all");
+  document.querySelector('.filter-button[data-filter="all"]').focus();
 });
 
 // 목록 위 안내 문구. type은 is-error, is-done 중 하나이거나 빈 값
