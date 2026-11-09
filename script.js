@@ -5,7 +5,8 @@ console.log("JavaScript가 연결되었습니다.");
 const navLinks = document.querySelectorAll(".site-nav a");
 
 function updateCurrentNav() {
-  const currentHash = window.location.hash;
+  // 11주차: 본문 바로가기(#content)로 왔으면 본문 맨 위인 서비스 소개를 보고 있는 것과 같다
+  const currentHash = window.location.hash === "#content" ? "" : window.location.hash;
 
   navLinks.forEach(function (link) {
     // #가 없으면 맨 위(서비스 소개)를 보고 있는 것이므로 첫 메뉴

@@ -15,6 +15,27 @@ a {
   text-decoration: none;
 }
 
+/* 11주차 본문 바로가기: 평소엔 화면 위로 올려 두고 키보드 초점이 오면 내려온다 */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  padding: 10px 14px;
+  border: 2px solid #2f6b5a;
+  border-radius: 8px;
+  color: #24503f;
+  font-weight: 700;
+  background-color: #ffffff;
+  transform: translateY(-160%);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 3px solid #2f6b5a;
+  outline-offset: 3px;
+}
+
 .site-header,
 main,
 .site-footer {
