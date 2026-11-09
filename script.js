@@ -47,6 +47,15 @@ menuToggle.addEventListener("click", function () {
   setMenuOpen(!siteNav.classList.contains("is-open"));
 });
 
+// 11주차 keydown: 열린 모바일 메뉴를 Esc로 닫고 초점을 메뉴 버튼으로 돌려준다
+// 메뉴가 닫혀 있거나 Esc가 아니면 아무것도 하지 않는다
+document.addEventListener("keydown", function (event) {
+  if (event.key !== "Escape" || !siteNav.classList.contains("is-open")) return;
+
+  setMenuOpen(false);
+  menuToggle.focus();
+});
+
 // 목적지를 고르면 메뉴를 닫는다. 넓은 화면에서는 is-open이 없어도 보이므로 영향 없다
 navLinks.forEach(function (link) {
   link.addEventListener("click", function () {
