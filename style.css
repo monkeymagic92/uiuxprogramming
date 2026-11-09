@@ -218,11 +218,10 @@ input[type="text"] {
   outline-offset: 3px;
 }
 
-/* 지금 보고 있는 메뉴: 배경 + 아래 막대로 구분한다 (hover보다 뒤에 둔다) */
+/* 지금 보고 있는 메뉴: 배경으로 구분한다 (hover보다 뒤에 둔다). 굵기·밑줄은 아래 11주차 규칙 */
 .site-nav a.is-current {
   color: #24503f;
   background-color: #e3efe9;
-  box-shadow: inset 0 -3px 0 #2f6b5a;
 }
 
 input[type="email"]:focus,
@@ -619,6 +618,28 @@ select.has-error {
   font-weight: 700;
 }
 
+/*
+11주차: 색을 구분하기 어려워도 선택된 메뉴·필터·탭을 찾을 수 있게 굵기와 밑줄을 더한다
+JS가 붙이는 상태값(aria-current, aria-pressed, aria-selected)을 그대로 읽어서
+화면 표시와 코드의 선택 상태가 같은 대상을 가리킨다
+10주차 메뉴의 아래 막대는 밑줄과 겹쳐 보여서 뺐다
+*/
+.site-nav a[aria-current="page"],
+.filter-button[aria-pressed="true"],
+.tab[aria-selected="true"] {
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+/* 오류 문장은 붉은 색에 더해 앞에 기호를 붙여 오류임을 알린다 */
+.booking-error:not(:empty)::before,
+.field-error:not(:empty)::before,
+.list-message.is-error::before,
+.form-message.is-error::before {
+  content: "⚠ ";
+}
+
 .list-count {
   margin-bottom: 12px;
   color: #5e6272;
@@ -825,7 +846,6 @@ body.dark .content-section {
 body.dark .site-nav a.is-current {
   color: #d6eae1;
   background-color: #2f4a40;
-  box-shadow: inset 0 -3px 0 #8cc2ad;
 }
 
 body.dark .interaction-item,
