@@ -17,14 +17,15 @@ function updateCurrentNav() {
     link.classList.toggle("is-current", current);
 
     if (current) {
-      link.setAttribute("aria-current", "page");
+      // 12주차: 다른 페이지가 아니라 한 페이지 안의 위치라서 page 대신 location
+      link.setAttribute("aria-current", "location");
     } else {
       link.removeAttribute("aria-current");
     }
   });
 
   // 11주차: 브라우저 탭 제목에도 지금 보고 있는 메뉴 이름을 넣는다
-  const currentLink = document.querySelector('.site-nav a[aria-current="page"]');
+  const currentLink = document.querySelector('.site-nav a[aria-current="location"]');
   const pageName = currentLink ? currentLink.textContent.trim() : "서비스 소개";
   document.title = pageName + " | 동네공부방";
 }

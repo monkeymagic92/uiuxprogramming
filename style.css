@@ -815,7 +815,7 @@ JS가 붙이는 상태값(aria-current, aria-pressed, aria-selected)을 그대�
 화면 표시와 코드의 선택 상태가 같은 대상을 가리킨다
 10주차 메뉴의 아래 막대는 밑줄과 겹쳐 보여서 뺐다
 */
-.site-nav a[aria-current="page"],
+.site-nav a[aria-current="location"],
 .filter-button[aria-pressed="true"],
 .tab[aria-selected="true"] {
   font-weight: 800;
