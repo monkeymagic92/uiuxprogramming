@@ -117,6 +117,61 @@
       </ol>
     </section>
 
+    <!--
+    12주차 아코디언: 예약 전에 자주 묻는 것을 질문만 늘어놓고, 궁금한 답만 펼쳐 본다
+    질문 버튼(aria-expanded) ↔ 답(hidden)은 aria-controls로 연결한다
+    질문이 늘어나도 accordion-item 하나를 같은 구조로 복사하면 script.js를 고치지 않아도 된다
+    -->
+    <section id="faq" class="content-section">
+      <h2>자주 묻는 질문</h2>
+
+      <div class="accordion">
+        <div class="accordion-item">
+          <h3 class="accordion-heading">
+            <button id="faq-q1" class="accordion-button" type="button" aria-expanded="false" aria-controls="faq-a1">
+              예약은 언제까지 취소할 수 있나요?
+            </button>
+          </h3>
+          <div id="faq-a1" class="accordion-panel" role="region" aria-labelledby="faq-q1" hidden>
+            <p>이용 시작 1시간 전까지 내 예약에서 취소할 수 있습니다. 취소한 시간은 다른 사람이나 내가 다시 예약할 수 있습니다.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h3 class="accordion-heading">
+            <button id="faq-q2" class="accordion-button" type="button" aria-expanded="false" aria-controls="faq-a2">
+              스터디룸은 몇 명까지 쓸 수 있나요?
+            </button>
+          </h3>
+          <div id="faq-a2" class="accordion-panel" role="region" aria-labelledby="faq-q2" hidden>
+            <p>최대 4명입니다. 예약은 한 사람 이름으로 하고, 함께 오는 사람도 이용 규칙을 지켜야 합니다.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h3 class="accordion-heading">
+            <button id="faq-q3" class="accordion-button" type="button" aria-expanded="false" aria-controls="faq-a3">
+              같은 시간에 두 곳을 예약할 수 있나요?
+            </button>
+          </h3>
+          <div id="faq-a3" class="accordion-panel" role="region" aria-labelledby="faq-q3" hidden>
+            <p>안 됩니다. 예약을 확정할 때 이미 있는 예약과 한 시간이라도 겹치면 확정하지 않고 시간을 다시 고르도록 안내합니다.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h3 class="accordion-heading">
+            <button id="faq-q4" class="accordion-button" type="button" aria-expanded="false" aria-controls="faq-a4">
+              내 예약과 후기는 어디에 저장되나요?
+            </button>
+          </h3>
+          <div id="faq-a4" class="accordion-panel" role="region" aria-labelledby="faq-q4" hidden>
+            <p>지금 쓰고 있는 브라우저에 저장됩니다. 새로고침해도 남아 있지만, 다른 기기나 다른 브라우저에서는 보이지 않습니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="prepare" class="content-section settings-panel">
       <h2>예약 준비</h2>
 
@@ -308,7 +363,9 @@
           </dl>
 
           <div class="step-actions">
-            <button class="secondary-button detail-button" type="button" aria-expanded="false">자세히 보기</button>
+            <!-- 12주차: 자주 묻는 질문과 같은 펼치기 함수를 쓴다. aria-controls는 script.js가 예약 번호로 채운다 -->
+            <button class="secondary-button detail-button" type="button" aria-expanded="false"
+              data-open-text="접기" data-closed-text="자세히 보기">자세히 보기</button>
             <button class="secondary-button cancel-button" type="button">예약 취소</button>
           </div>
         </li>

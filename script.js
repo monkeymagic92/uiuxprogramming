@@ -63,6 +63,38 @@ navLinks.forEach(function (link) {
   });
 });
 
+// 12주차 펼치기·접기 공통 함수
+// 버튼의 aria-controls로 연결된 영역을 열고 닫으면서 aria-expanded를 같이 맞춘다
+// 버튼에 data-open-text / data-closed-text가 있으면 상태에 맞게 버튼 글자도 바꾼다
+// 자주 묻는 질문(아코디언)과 내 예약의 자세히 보기가 이 함수를 같이 쓴다
+function setExpanded(button, open) {
+  const target = document.getElementById(button.getAttribute("aria-controls"));
+
+  target.hidden = !open;
+  button.setAttribute("aria-expanded", String(open));
+
+  if (button.dataset.openText) {
+    button.textContent = open ? button.dataset.openText : button.dataset.closedText;
+  }
+}
+
+function toggleExpanded(button) {
+  setExpanded(button, button.getAttribute("aria-expanded") !== "true");
+}
+
+// 아코디언: 질문 버튼마다 따로 붙이지 않고 묶음(.accordion)에서 click을 받는다
+// 버튼이라 키보드는 Tab으로 질문을 옮겨 다니고 Enter·Space로 펼친다
+function setupAccordion(accordion) {
+  accordion.addEventListener("click", function (event) {
+    const button = event.target.closest(".accordion-button");
+    if (button) {
+      toggleExpanded(button);
+    }
+  });
+}
+
+document.querySelectorAll(".accordion").forEach(setupAccordion);
+
 // 바꿀 요소를 id로 찾는다
 const subscribeForm = document.querySelector(".subscribe-form");
 const emailInput = document.querySelector("#email");
@@ -483,11 +515,11 @@ function makeBookingItem(booking) {
   const detailButton = item.querySelector(".detail-button");
   const cancelButton = item.querySelector(".cancel-button");
 
-  // click: 자세히 보기 ↔ 접기
+  // click: 자세히 보기 ↔ 접기 (12주차: 자주 묻는 질문과 같은 toggleExpanded를 쓴다)
+  detail.id = "booking-detail-" + booking.id;
+  detailButton.setAttribute("aria-controls", detail.id);
   detailButton.addEventListener("click", function () {
-    detail.hidden = !detail.hidden;
-    detailButton.textContent = detail.hidden ? "자세히 보기" : "접기";
-    detailButton.setAttribute("aria-expanded", String(!detail.hidden));
+    toggleExpanded(detailButton);
     nameBookingButton(detailButton, booking);
   });
   nameBookingButton(detailButton, booking);
