@@ -205,6 +205,12 @@ h3 { margin-bottom: 10px; font-size: 20px; }
   background-color: var(--green-soft);
 }
 
+/* 12주차: 패널도 Tab으로 초점을 받으므로 탭과 같은 초점선 */
+.panel:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
 .panel[hidden] {
   display: none;
 }

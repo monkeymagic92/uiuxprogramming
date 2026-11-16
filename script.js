@@ -155,43 +155,60 @@ function handleAgreeChange() {
 
 agreeCheck.addEventListener("change", handleAgreeChange);
 
-// 주요 기능 탭: 같은 역할의 요소가 여러 개라 querySelectorAll로 모두 찾는다
-const tabs = document.querySelectorAll(".tab");
-const panels = document.querySelectorAll(".panel");
+// 주요 기능 탭 (6주차)
+// 12주차: 탭 묶음(tablist) 하나를 받아 그 안의 탭만 다루는 함수로 바꿨다
+// 탭을 또 만들 때는 같은 HTML 구조(role, data-target)로 쓰면 setupTabs가 그대로 처리한다
 
-// 모든 탭과 패널의 선택 상태를 먼저 해제한다
-function resetTabsAndPanels() {
-  tabs.forEach(function (tab) {
-    tab.classList.remove("is-active");
-    tab.setAttribute("aria-selected", "false");
+// 고른 탭 하나만 선택하고, 연결된 패널만 보인다
+function selectTab(tablist, nextTab) {
+  tablist.querySelectorAll('[role="tab"]').forEach(function (tab) {
+    const selected = tab === nextTab;
+    const panel = document.querySelector(tab.dataset.target);
+
+    tab.classList.toggle("is-active", selected);
+    tab.setAttribute("aria-selected", String(selected));
+    // 선택된 탭만 Tab 키 순서에 남기고, 나머지 탭은 방향키로 옮겨 간다
+    tab.tabIndex = selected ? 0 : -1;
+
+    panel.classList.toggle("is-active", selected);
+    panel.hidden = !selected;
+  });
+}
+
+function setupTabs(tablist) {
+  const tabList = Array.from(tablist.querySelectorAll('[role="tab"]'));
+
+  // click: 탭마다 따로 붙이지 않고 묶음에서 한 번에 받는다
+  tablist.addEventListener("click", function (event) {
+    const tab = event.target.closest('[role="tab"]');
+    if (tab) {
+      selectTab(tablist, tab);
+    }
   });
 
-  panels.forEach(function (panel) {
-    panel.classList.remove("is-active");
-    panel.hidden = true;
+  // keydown: ←/↑ 이전 탭, →/↓ 다음 탭, Home 첫 탭, End 마지막 탭. 끝에서 넘어가면 반대쪽으로
+  tablist.addEventListener("keydown", function (event) {
+    const index = tabList.indexOf(document.activeElement);
+    let next = -1;
+
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % tabList.length;
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index - 1 + tabList.length) % tabList.length;
+    if (event.key === "Home") next = 0;
+    if (event.key === "End") next = tabList.length - 1;
+
+    if (index === -1 || next === -1) return;
+
+    // 방향키로 화면이 스크롤되지 않게 막고, 선택과 초점을 같이 옮긴다
+    event.preventDefault();
+    selectTab(tablist, tabList[next]);
+    tabList[next].focus();
   });
+
+  // 처음 화면: HTML에서 aria-selected="true"인 탭으로 맞춘다
+  selectTab(tablist, tablist.querySelector('[aria-selected="true"]') || tabList[0]);
 }
 
-// 누른 탭과 data-target으로 연결된 패널만 켠다
-function activateTab(clickedTab) {
-  const targetSelector = clickedTab.dataset.target;
-  const targetPanel = document.querySelector(targetSelector);
-
-  clickedTab.classList.add("is-active");
-  clickedTab.setAttribute("aria-selected", "true");
-
-  targetPanel.classList.add("is-active");
-  targetPanel.hidden = false;
-}
-
-function handleTabClick(event) {
-  resetTabsAndPanels();
-  activateTab(event.currentTarget);
-}
-
-tabs.forEach(function (tab) {
-  tab.addEventListener("click", handleTabClick);
-});
+document.querySelectorAll('[role="tablist"]').forEach(setupTabs);
 
 // 공부방 예약 흐름
 const userNameError = document.querySelector("#userNameError");
