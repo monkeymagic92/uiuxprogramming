@@ -496,9 +496,12 @@ function nameBookingButton(button, booking) {
     booking.area + " " + booking.seat + " " + booking.date + " " + booking.time + " " + button.textContent);
 }
 
-// 템플릿을 복사해 예약 한 건의 목록 줄을 만든다
+// 템플릿을 복사해 예약 한 건의 목록 줄(카드)을 만든다
+// 12주차: 카드마다 이벤트를 붙이지 않는다. 카드에는 예약 번호(data-id)만 적고,
+// 버튼의 data-action(detail, cancel)으로 무슨 행동인지 구분해 목록 하나에서 받는다
 function makeBookingItem(booking) {
   const item = bookingItemTemplate.content.firstElementChild.cloneNode(true);
+  item.dataset.id = booking.id;
 
   item.querySelector(".booking-item-place").textContent = booking.area + " · " + booking.seat;
   item.querySelector(".booking-item-time").textContent =
@@ -511,22 +514,12 @@ function makeBookingItem(booking) {
   item.querySelector(".detail-deadline").textContent =
     booking.date + " " + formatHour(start - 1) + "까지";
 
+  // 자세히 보기는 자주 묻는 질문과 같은 펼치기 함수(toggleExpanded)를 쓰므로 영역에 id를 붙여 연결한다
   const detail = item.querySelector(".booking-detail");
   const detailButton = item.querySelector(".detail-button");
-  const cancelButton = item.querySelector(".cancel-button");
-
-  // click: 자세히 보기 ↔ 접기 (12주차: 자주 묻는 질문과 같은 toggleExpanded를 쓴다)
   detail.id = "booking-detail-" + booking.id;
   detailButton.setAttribute("aria-controls", detail.id);
-  detailButton.addEventListener("click", function () {
-    toggleExpanded(detailButton);
-    nameBookingButton(detailButton, booking);
-  });
   nameBookingButton(detailButton, booking);
-
-  cancelButton.addEventListener("click", function () {
-    cancelBooking(booking, item);
-  });
 
   showBookingStatus(booking, item);
   return item;
@@ -544,16 +537,92 @@ function showBookingStatus(booking, item) {
   nameBookingButton(cancelButton, booking);
 }
 
-// click: 이용 1시간 전이 지나지 않았을 때만 취소한다
+// click: 목록 안의 모든 카드 버튼이 여기로 모인다
+myBookingList.addEventListener("click", function (event) {
+  const button = event.target.closest("button[data-action]");
+  if (!button) return;
+
+  const item = button.closest(".booking-item");
+  const booking = myBookings.find(function (saved) {
+    return saved.id === Number(item.dataset.id);
+  });
+
+  if (button.dataset.action === "detail") {
+    toggleExpanded(button);
+    nameBookingButton(button, booking);
+    return;
+  }
+
+  if (button.dataset.action !== "cancel") return;
+  askCancelBooking(booking, item, button);
+});
+
+function isPastCancelDeadline(booking) {
+  const deadline = new Date(booking.date + "T" + formatHour(toHour(booking.time) - 1));
+  return new Date() >= deadline;
+}
+
+// 12주차 모달 공통 함수
+// 연 버튼을 기억해 두었다가, 어떤 방법으로 닫혀도(돌아가기·Esc·바깥 클릭) 그 버튼으로 초점을 돌려준다
+let modalOpener = null;
+
+function openModal(dialog, opener) {
+  modalOpener = opener;
+  dialog.showModal();
+}
+
+function closeModal(dialog) {
+  dialog.close();
+}
+
+document.querySelectorAll(".modal").forEach(function (dialog) {
+  // data-modal-close 버튼, 또는 상자 바깥의 어두운 배경을 누르면 닫는다
+  dialog.addEventListener("click", function (event) {
+    if (event.target.closest("[data-modal-close]") || event.target === dialog) {
+      closeModal(dialog);
+    }
+  });
+
+  // Esc도 close 이벤트로 들어온다. 연 버튼이 그대로 쓸 수 있는 상태일 때만 초점을 돌려준다
+  // (취소를 확정하면 그 버튼은 "취소 완료"로 막히거나 목록에서 빠지므로 cancelBooking이 초점을 옮긴다)
+  dialog.addEventListener("close", function () {
+    if (modalOpener && modalOpener.isConnected && !modalOpener.disabled) {
+      modalOpener.focus();
+    }
+    modalOpener = null;
+  });
+});
+
+// 예약 취소 확인 모달
+const cancelDialog = document.querySelector("#cancelDialog");
+const cancelDialogText = document.querySelector("#cancelDialogText");
+let pendingCancel = null;
+
+// click 예약 취소: 기한이 지났으면 모달 없이 바로 안내하고, 아니면 어떤 예약인지 보여 주고 한 번 더 묻는다
+function askCancelBooking(booking, item, button) {
+  if (isPastCancelDeadline(booking)) {
+    showListMessage(booking.date + " " + booking.time + " " + booking.area + " " + booking.seat
+      + " 예약은 취소 기한(이용 1시간 전)이 지나 취소할 수 없습니다. 예약 시간에 맞춰 방문해 주세요.", "is-error");
+    return;
+  }
+
+  pendingCancel = { booking: booking, item: item };
+  cancelDialogText.textContent = booking.area + " " + booking.seat + " · "
+    + booking.date + " " + booking.time + "부터 " + booking.hours + "시간";
+  openModal(cancelDialog, button);
+}
+
+document.querySelector("#cancelConfirm").addEventListener("click", function () {
+  const target = pendingCancel;
+  pendingCancel = null;
+  closeModal(cancelDialog);
+  cancelBooking(target.booking, target.item);
+});
+
+// 모달에서 "예약 취소하기"를 눌렀을 때 실제로 취소한다
 function cancelBooking(booking, item) {
   const place = booking.area + " " + booking.seat;
   const when = booking.date + " " + booking.time;
-  const deadline = new Date(booking.date + "T" + formatHour(toHour(booking.time) - 1));
-
-  if (new Date() >= deadline) {
-    showListMessage(when + " " + place + " 예약은 취소 기한(이용 1시간 전)이 지나 취소할 수 없습니다. 예약 시간에 맞춰 방문해 주세요.", "is-error");
-    return;
-  }
 
   booking.status = "취소됨";
   saveBookings();

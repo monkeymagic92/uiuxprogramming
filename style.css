@@ -734,6 +734,54 @@ select.has-error {
   margin-top: 16px;
 }
 
+/*
+12주차 모달 (예약 취소 확인)
+위험한 행동의 버튼은 primary-button 모양을 그대로 쓰고 색만 danger-button으로 바꾼다
+*/
+.modal {
+  width: min(440px, calc(100% - 32px));
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  color: var(--ink);
+  background-color: var(--surface);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.2);
+}
+
+.modal::backdrop {
+  background-color: rgba(27, 33, 31, 0.55);
+}
+
+/* 바깥 클릭을 구분하려고 여백은 dialog가 아니라 안쪽 상자에 준다 */
+.modal-box {
+  padding: 28px;
+}
+
+.modal-title {
+  margin-bottom: 12px;
+  font-size: 22px;
+}
+
+.modal-target {
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  color: var(--green-dark);
+  background-color: var(--green-soft);
+  font-weight: 700;
+}
+
+.modal p:not(.modal-target) {
+  color: var(--muted);
+}
+
+.danger-button {
+  background-color: var(--danger);
+}
+
+.danger-button:hover {
+  background-color: #842d21;
+}
+
 /* 내 예약 필터 (10주차): 주요 기능 탭과 같은 모양으로 맞춘다 */
 .booking-filters {
   display: flex;
@@ -1096,6 +1144,21 @@ body.dark .accordion-panel {
 }
 
 body.dark .accordion-panel p {
+  color: #c5d0cb;
+}
+
+/* 12주차 모달 */
+body.dark .modal {
+  color: #e8eeeb;
+  background-color: #232a27;
+}
+
+body.dark .modal .modal-target {
+  color: #d6eae1;
+  background-color: #2f4a40;
+}
+
+body.dark .modal p:not(.modal-target) {
   color: #c5d0cb;
 }
 

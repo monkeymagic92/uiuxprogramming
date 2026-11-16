@@ -365,11 +365,29 @@
           <div class="step-actions">
             <!-- 12주차: 자주 묻는 질문과 같은 펼치기 함수를 쓴다. aria-controls는 script.js가 예약 번호로 채운다 -->
             <button class="secondary-button detail-button" type="button" aria-expanded="false"
-              data-open-text="접기" data-closed-text="자세히 보기">자세히 보기</button>
-            <button class="secondary-button cancel-button" type="button">예약 취소</button>
+              data-action="detail" data-open-text="접기" data-closed-text="자세히 보기">자세히 보기</button>
+            <button class="secondary-button cancel-button" type="button" data-action="cancel">예약 취소</button>
           </div>
         </li>
       </template>
+
+      <!--
+      12주차 모달: 예약 취소는 되돌릴 수 없어서 한 번 더 확인한다
+      showModal()로 열면 뒤 화면은 눌리지 않고 Tab도 상자 안에서만 돈다. Esc로 닫힌다
+      처음 초점은 되돌릴 수 있는 쪽인 "돌아가기"에 둔다
+      -->
+      <dialog id="cancelDialog" class="modal" aria-labelledby="cancelDialogTitle" aria-describedby="cancelDialogText cancelDialogNote">
+        <div class="modal-box">
+          <h2 id="cancelDialogTitle" class="modal-title">이 예약을 취소할까요?</h2>
+          <p id="cancelDialogText" class="modal-target"></p>
+          <p id="cancelDialogNote">취소한 예약은 되돌릴 수 없습니다. 같은 시간에 다시 이용하려면 새로 예약해 주세요.</p>
+
+          <div class="step-actions">
+            <button class="secondary-button" type="button" data-modal-close autofocus>돌아가기</button>
+            <button class="primary-button danger-button" id="cancelConfirm" type="button">예약 취소하기</button>
+          </div>
+        </div>
+      </dialog>
     </section>
 
     <!--
