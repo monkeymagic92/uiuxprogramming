@@ -966,27 +966,42 @@ function loadReviews() {
 
 const reviews = loadReviews();
 
+// 12주차: 후기 한 건을 받아 목록 한 줄을 돌려주는 함수로 나눴다
+// 목록 함수(renderReviews)는 빈 목록 안내와 순서만, 카드 모양은 이 함수만 맡는다
+function createText(tagName, className, text) {
+  const element = document.createElement(tagName);
+  element.className = className;
+  element.textContent = text;
+  return element;
+}
+
+function createReviewItem(review) {
+  const item = document.createElement("li");
+  // 불편했던 점이 있는 후기는 표시를 달리한다 (글 "불편했던 점"과 왼쪽 선)
+  item.className = review.issue ? "review-item has-issue" : "review-item";
+
+  item.append(createText("p", "review-item-head", review.area + " · " + review.seat));
+  item.append(createText("p", "review-item-text", review.text));
+
+  // 날짜는 time 요소로. 화면 글자와 기계가 읽는 값(datetime)을 같이 둔다
+  const sub = createText("p", "review-item-sub", "");
+  const date = createText("time", "", review.date);
+  date.dateTime = review.date;
+  sub.append(date);
+  if (review.issue) {
+    sub.append(" · 불편했던 점: " + review.issue);
+  }
+  item.append(sub);
+
+  return item;
+}
+
 function renderReviews() {
   reviewList.innerHTML = "";
   reviewEmpty.hidden = reviews.length > 0;
 
   reviews.forEach(function (review) {
-    const item = document.createElement("li");
-    const head = document.createElement("p");
-    const body = document.createElement("p");
-
-    item.className = "review-item";
-    head.className = "review-item-head";
-    head.textContent = review.area + " · " + review.seat;
-    body.textContent = review.text;
-    item.append(head, body);
-
-    const sub = document.createElement("p");
-    sub.className = "review-item-sub";
-    sub.textContent = review.date + (review.issue ? " · 불편했던 점: " + review.issue : "");
-    item.append(sub);
-
-    reviewList.appendChild(item);
+    reviewList.append(createReviewItem(review));
   });
 }
 
