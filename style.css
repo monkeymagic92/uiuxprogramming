@@ -1,18 +1,69 @@
+/*
+12주차 디자인 토큰: 여러 요소가 같이 쓰는 색에 이름을 붙인다
+버튼·탭·필터·카드가 같은 이름을 불러오므로 색을 바꿀 때 여기 한 곳만 고치면 된다
+*/
+:root {
+  --green: #2f6b5a;          /* 주요 행동, 선택된 탭·필터 */
+  --green-dark: #24503f;     /* hover, 진한 강조 글자 */
+  --green-soft: #eef4f1;     /* 연한 배경 */
+  --green-hover-bg: #e3efe9; /* 탭·메뉴 hover 배경 */
+  --green-pale: #d6eae1;     /* 완료 안내 배경 */
+  --on-green: #ffffff;       /* 초록 배경 위 글자 */
+  --ink: #292a31;            /* 본문 글자 */
+  --muted: #5e6272;          /* 보조 글자 */
+  --page: #f6f8f7;           /* 화면 바탕 */
+  --surface: #ffffff;        /* 카드·입력칸 바탕 */
+  --line: #dde5e1;           /* 카드 경계선 */
+  --line-green: #cfe0d8;     /* 탭·필터 경계선 */
+  --line-strong: #bfc9c4;    /* 입력칸 경계선 */
+  --danger: #a33a2b;         /* 오류 */
+  --danger-bg: #fbeae7;
+  --disabled: #a3aca8;
+  --focus: #2f6b5a;          /* 키보드 초점 외곽선 */
+  --radius: 8px;             /* 버튼·입력칸 모서리 */
+  --control-height: 44px;    /* 버튼 최소 높이 */
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  color: #292a31;
+  color: var(--ink);
   font-family: "Noto Sans KR", Arial, sans-serif;
   line-height: 1.6;
-  background-color: #f6f8f7;
+  background-color: var(--page);
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/*
+12주차 버튼 공통 규칙
+주요(primary)·보조(secondary)·탭·필터·아코디언 버튼은 색과 테두리만 다르고
+높이·모서리·글꼴·초점선은 같다. 같은 부분은 여기 한 번만 쓰고, 다른 부분만 각 클래스에 둔다
+*/
+.primary-button,
+.secondary-button,
+.tab,
+.filter-button,
+.accordion-button {
+  min-height: var(--control-height);
+  border-radius: var(--radius);
+  font: inherit;
+  cursor: pointer;
+}
+
+.primary-button:focus,
+.secondary-button:focus,
+.tab:focus,
+.filter-button:focus,
+.accordion-button:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
 }
 
 /* 11주차 본문 바로가기: 평소엔 화면 위로 올려 두고 키보드 초점이 오면 내려온다 */
@@ -22,17 +73,17 @@ a {
   left: 8px;
   z-index: 10;
   padding: 10px 14px;
-  border: 2px solid #2f6b5a;
+  border: 2px solid var(--green);
   border-radius: 8px;
-  color: #24503f;
+  color: var(--green-dark);
   font-weight: 700;
-  background-color: #ffffff;
+  background-color: var(--surface);
   transform: translateY(-160%);
 }
 
 .skip-link:focus-visible {
   transform: translateY(0);
-  outline: 3px solid #2f6b5a;
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
 
@@ -53,7 +104,7 @@ main,
 
 .eyebrow {
   margin: 0 0 8px;
-  color: #2f6b5a;
+  color: var(--green);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -66,7 +117,7 @@ h3 { margin-bottom: 10px; font-size: 20px; }
 
 .header-description {
   margin-bottom: 28px;
-  color: #5e6272;
+  color: var(--muted);
   font-size: 18px;
 }
 
@@ -95,9 +146,9 @@ h3 { margin-bottom: 10px; font-size: 20px; }
 .content-section {
   margin-bottom: 24px;
   padding: 40px;
-  border: 1px solid #dde5e1;
+  border: 1px solid var(--line);
   border-radius: 18px;
-  background-color: #ffffff;
+  background-color: var(--surface);
 }
 
 .about-layout {
@@ -128,35 +179,30 @@ h3 { margin-bottom: 10px; font-size: 20px; }
 
 .tab {
   padding: 10px 16px;
-  border: 1px solid #cfe0d8;
-  border-radius: 8px;
-  color: #5e6272;
-  font: inherit;
-  background-color: #ffffff;
-  cursor: pointer;
+  border: 1px solid var(--line-green);
+  color: var(--muted);
+  background-color: var(--surface);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .tab:hover {
-  color: #24503f;
-  background-color: #e3efe9;
+  color: var(--green-dark);
+  background-color: var(--green-hover-bg);
 }
-
-.tab:focus { outline: 3px solid #2f6b5a; outline-offset: 3px; }
 
 /* 선택된 탭은 hover보다 뒤에 둬서 색이 유지되게 한다 */
 .tab.is-active {
-  color: #ffffff;
-  border-color: #2f6b5a;
-  background-color: #2f6b5a;
+  color: var(--on-green);
+  border-color: var(--green);
+  background-color: var(--green);
   font-weight: 700;
 }
 
 .panel {
   padding: 24px;
-  border: 1px solid #cfe0d8;
+  border: 1px solid var(--line-green);
   border-radius: 14px;
-  background-color: #eef4f1;
+  background-color: var(--green-soft);
 }
 
 .panel[hidden] {
@@ -164,7 +210,7 @@ h3 { margin-bottom: 10px; font-size: 20px; }
 }
 
 .panel p {
-  color: #5e6272;
+  color: var(--muted);
 }
 
 .panel p:last-child {
@@ -180,7 +226,7 @@ h3 { margin-bottom: 10px; font-size: 20px; }
   margin-top: 10px;
 }
 
-.subscribe-section { background-color: #eef4f1; }
+.subscribe-section { background-color: var(--green-soft); }
 
 .subscribe-form {
   display: flex;
@@ -201,7 +247,7 @@ input[type="text"] {
   width: 100%;
   margin-top: 8px;
   padding: 12px 14px;
-  border: 1px solid #bfc9c4;
+  border: 1px solid var(--line-strong);
   border-radius: 8px;
   font: inherit;
 }
@@ -209,19 +255,16 @@ input[type="text"] {
 .primary-button {
   padding: 12px 18px;
   border: 0;
-  border-radius: 8px;
-  color: #ffffff;
-  font: inherit;
+  color: var(--on-green);
   font-weight: 700;
-  background-color: #2f6b5a;
-  cursor: pointer;
+  background-color: var(--green);
 }
 
 .site-footer {
   padding-top: 24px;
   padding-bottom: 48px;
   /* 11주차: #747786은 배경 대비 4.17:1이라 보조 글자색(5.68:1)으로 맞춘다 */
-  color: #5e6272;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -230,25 +273,25 @@ input[type="text"] {
 }
 
 .site-nav a:hover {
-  color: #24503f;
-  background-color: #e3efe9;
+  color: var(--green-dark);
+  background-color: var(--green-hover-bg);
 }
 
 .site-nav a:focus {
-  outline: 3px solid #2f6b5a;
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
 
 /* 지금 보고 있는 메뉴: 배경으로 구분한다 (hover보다 뒤에 둔다). 굵기·밑줄은 아래 11주차 규칙 */
 .site-nav a.is-current {
-  color: #24503f;
-  background-color: #e3efe9;
+  color: var(--green-dark);
+  background-color: var(--green-hover-bg);
 }
 
 input[type="email"]:focus,
 input[type="text"]:focus {
-  border-color: #2f6b5a;
-  outline: 3px solid #2f6b5a;
+  border-color: var(--green);
+  outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
 
@@ -256,51 +299,50 @@ input[type="text"]:focus {
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-.primary-button:hover { background-color: #24503f; }
-.primary-button:focus { outline: 3px solid #2f6b5a; outline-offset: 3px; }
+.primary-button:hover { background-color: var(--green-dark); }
 .primary-button:active { transform: translateY(1px); }
 
 /* 알림 신청 결과 문구 */
 .form-message {
   max-width: 570px;
   margin: 16px 0 0;
-  color: #5e6272;
+  color: var(--muted);
 }
 
 .form-message.is-error {
   padding: 12px 14px;
   border-radius: 8px;
-  color: #a33a2b;
-  background-color: #fbeae7;
+  color: var(--danger);
+  background-color: var(--danger-bg);
   font-weight: 700;
 }
 
 .form-message.is-done {
   padding: 12px 14px;
   border-radius: 8px;
-  color: #ffffff;
-  background-color: #2f6b5a;
+  color: var(--on-green);
+  background-color: var(--green);
   font-weight: 700;
 }
 
 /* 신청 뒤 버튼과 입력창 */
 .primary-button:disabled {
-  color: #ffffff;
-  background-color: #a3aca8;
+  color: var(--on-green);
+  background-color: var(--disabled);
   cursor: not-allowed;
 }
 
 input[type="email"]:disabled {
-  color: #5e6272;
-  background-color: #eef4f1;
+  color: var(--muted);
+  background-color: var(--green-soft);
 }
 
 /* 예약 준비 영역 */
 .interaction-item {
   padding: 24px;
-  border: 1px solid #dde5e1;
+  border: 1px solid var(--line);
   border-radius: 14px;
-  background-color: #ffffff;
+  background-color: var(--surface);
 }
 
 .interaction-item + .interaction-item {
@@ -318,7 +360,7 @@ input[type="email"]:disabled {
 }
 
 #userNameCount.is-full {
-  color: #a33a2b;
+  color: var(--danger);
   font-weight: 700;
 }
 
@@ -343,13 +385,13 @@ input[type="email"]:disabled {
   margin: 12px 0;
   padding: 12px 14px;
   border-radius: 8px;
-  color: #5e6272;
-  background-color: #eef4f1;
+  color: var(--muted);
+  background-color: var(--green-soft);
 }
 
 #agreeMessage.is-ready {
-  color: #24503f;
-  background-color: #d6eae1;
+  color: var(--green-dark);
+  background-color: var(--green-pale);
   font-weight: 700;
 }
 
@@ -365,15 +407,15 @@ input[type="email"]:disabled {
   margin-bottom: 16px;
   padding: 6px 12px;
   border-radius: 999px;
-  color: #24503f;
-  background-color: #eef4f1;
+  color: var(--green-dark);
+  background-color: var(--green-soft);
   font-size: 14px;
   font-weight: 700;
 }
 
 .booking-step {
   padding: 24px;
-  border: 1px solid #dde5e1;
+  border: 1px solid var(--line);
   border-radius: 14px;
 }
 
@@ -394,16 +436,16 @@ input[type="email"]:disabled {
   max-width: 360px;
   margin-top: 8px;
   padding: 12px 14px;
-  border: 1px solid #bfc9c4;
+  border: 1px solid var(--line-strong);
   border-radius: 8px;
   font: inherit;
-  background-color: #ffffff;
+  background-color: var(--surface);
 }
 
 .booking-step select:focus,
 .booking-step input[type="date"]:focus {
-  border-color: #2f6b5a;
-  outline: 3px solid #2f6b5a;
+  border-color: var(--green);
+  outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
 
@@ -412,8 +454,8 @@ input[type="email"]:disabled {
   margin: 12px 0 0;
   padding: 12px 14px;
   border-radius: 8px;
-  color: #24503f;
-  background-color: #eef4f1;
+  color: var(--green-dark);
+  background-color: var(--green-soft);
 }
 
 .step-actions {
@@ -425,24 +467,20 @@ input[type="email"]:disabled {
 
 .secondary-button {
   padding: 12px 18px;
-  border: 1px solid #2f6b5a;
-  border-radius: 8px;
-  color: #2f6b5a;
-  font: inherit;
+  border: 1px solid var(--green);
+  color: var(--green);
   font-weight: 700;
-  background-color: #ffffff;
-  cursor: pointer;
+  background-color: var(--surface);
 }
 
-.secondary-button:hover { background-color: #e3efe9; }
-.secondary-button:focus { outline: 3px solid #2f6b5a; outline-offset: 3px; }
+.secondary-button:hover { background-color: var(--green-hover-bg); }
 
 .booking-summary {
   margin: 0;
 }
 
 .booking-summary dt {
-  color: #5e6272;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -454,7 +492,7 @@ input[type="email"]:disabled {
 /* 필수값 누락 */
 .booking-error {
   margin: 12px 0 0;
-  color: #a33a2b;
+  color: var(--danger);
   font-weight: 700;
 }
 
@@ -464,19 +502,19 @@ input[type="email"]:disabled {
 
 input.has-error,
 select.has-error {
-  border-color: #a33a2b;
-  background-color: #fbeae7;
+  border-color: var(--danger);
+  background-color: var(--danger-bg);
 }
 
 /* 예약 완료 */
 .booking-progress.is-done {
-  color: #ffffff;
-  background-color: #2f6b5a;
+  color: var(--on-green);
+  background-color: var(--green);
 }
 
 .booking-done {
-  border-color: #2f6b5a;
-  background-color: #eef4f1;
+  border-color: var(--green);
+  background-color: var(--green-soft);
 }
 
 #bookingDoneText {
@@ -485,7 +523,7 @@ select.has-error {
 
 /* 겹치는 예약이 있을 때 확인 화면의 날짜·시간 */
 .booking-summary dd.has-error {
-  color: #a33a2b;
+  color: var(--danger);
 }
 
 /* 내 예약 */
@@ -496,9 +534,9 @@ select.has-error {
 
 .booking-empty {
   padding: 16px;
-  border: 1px dashed #bfc9c4;
+  border: 1px dashed var(--line-strong);
   border-radius: 14px;
-  color: #5e6272;
+  color: var(--muted);
 }
 
 .list-message:empty {
@@ -513,13 +551,13 @@ select.has-error {
 }
 
 .list-message.is-error {
-  color: #a33a2b;
-  background-color: #fbeae7;
+  color: var(--danger);
+  background-color: var(--danger-bg);
 }
 
 .list-message.is-done {
-  color: #24503f;
-  background-color: #d6eae1;
+  color: var(--green-dark);
+  background-color: var(--green-pale);
 }
 
 .booking-list {
@@ -530,7 +568,7 @@ select.has-error {
 
 .booking-item {
   padding: 20px 24px;
-  border: 1px solid #dde5e1;
+  border: 1px solid var(--line);
   border-radius: 14px;
 }
 
@@ -554,22 +592,22 @@ select.has-error {
 .booking-status {
   padding: 2px 10px;
   border-radius: 999px;
-  color: #ffffff;
-  background-color: #2f6b5a;
+  color: var(--on-green);
+  background-color: var(--green);
   font-size: 13px;
   font-weight: 700;
 }
 
 .booking-item-time {
   margin-bottom: 0;
-  color: #5e6272;
+  color: var(--muted);
 }
 
 .booking-detail {
   margin-top: 16px;
   padding: 16px;
   border-radius: 8px;
-  background-color: #eef4f1;
+  background-color: var(--green-soft);
 }
 
 .booking-detail dd:last-child {
@@ -583,12 +621,12 @@ select.has-error {
 /* 취소한 예약은 흐리게 두고 시간에 줄을 긋는다 */
 .booking-item.is-cancelled {
   border-style: dashed;
-  background-color: #f6f8f7;
+  background-color: var(--page);
 }
 
 .booking-item.is-cancelled .booking-status {
-  color: #5e6272;
-  background-color: #dde5e1;
+  color: var(--muted);
+  background-color: var(--line);
 }
 
 .booking-item.is-cancelled .booking-item-time {
@@ -596,8 +634,8 @@ select.has-error {
 }
 
 .secondary-button:disabled {
-  border-color: #bfc9c4;
-  color: #a3aca8;
+  border-color: var(--line-strong);
+  color: var(--disabled);
   background-color: transparent;
   cursor: not-allowed;
 }
@@ -623,27 +661,21 @@ select.has-error {
 }
 
 .filter-button {
-  min-height: 42px;
   padding: 8px 16px;
-  border: 1px solid #cfe0d8;
-  border-radius: 8px;
-  color: #5e6272;
-  font: inherit;
-  background-color: #ffffff;
-  cursor: pointer;
+  border: 1px solid var(--line-green);
+  color: var(--muted);
+  background-color: var(--surface);
 }
 
 .filter-button:hover {
-  color: #24503f;
-  background-color: #e3efe9;
+  color: var(--green-dark);
+  background-color: var(--green-hover-bg);
 }
 
-.filter-button:focus { outline: 3px solid #2f6b5a; outline-offset: 3px; }
-
 .filter-button.is-active {
-  color: #ffffff;
-  border-color: #2f6b5a;
-  background-color: #2f6b5a;
+  color: var(--on-green);
+  border-color: var(--green);
+  background-color: var(--green);
   font-weight: 700;
 }
 
@@ -671,7 +703,7 @@ JS가 붙이는 상태값(aria-current, aria-pressed, aria-selected)을 그대�
 
 .list-count {
   margin-bottom: 12px;
-  color: #5e6272;
+  color: var(--muted);
   font-size: 14px;
   font-weight: 700;
 }
@@ -698,8 +730,8 @@ JS가 붙이는 상태값(aria-current, aria-pressed, aria-selected)을 그대�
   margin-left: 4px;
   padding: 1px 6px;
   border-radius: 4px;
-  color: #24503f;
-  background-color: #d6eae1;
+  color: var(--green-dark);
+  background-color: var(--green-pale);
   font-size: 12px;
 }
 
@@ -710,10 +742,10 @@ JS가 붙이는 상태값(aria-current, aria-pressed, aria-selected)을 그대�
   max-width: 560px;
   margin-top: 8px;
   padding: 12px 14px;
-  border: 1px solid #bfc9c4;
+  border: 1px solid var(--line-strong);
   border-radius: 8px;
   font: inherit;
-  background-color: #ffffff;
+  background-color: var(--surface);
 }
 
 .review-form textarea {
@@ -723,8 +755,8 @@ JS가 붙이는 상태값(aria-current, aria-pressed, aria-selected)을 그대�
 .review-form select:focus,
 .review-form textarea:focus,
 .inline-options input:focus {
-  border-color: #2f6b5a;
-  outline: 3px solid #2f6b5a;
+  border-color: var(--green);
+  outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
 
@@ -745,7 +777,7 @@ JS가 붙이는 상태값(aria-current, aria-pressed, aria-selected)을 그대�
 .field-help,
 .field-meta p {
   margin: 6px 0 0;
-  color: #5e6272;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -764,7 +796,7 @@ JS가 붙이는 상태값(aria-current, aria-pressed, aria-selected)을 그대�
 .field-error {
   min-height: 24px;
   margin: 4px 0 0;
-  color: #a33a2b;
+  color: var(--danger);
   font-size: 14px;
   font-weight: 700;
 }
@@ -773,9 +805,9 @@ JS가 붙이는 상태값(aria-current, aria-pressed, aria-selected)을 그대�
   max-width: 560px;
   margin: 12px 0 0;
   padding: 16px;
-  border: 1px solid #eef4f1;
+  border: 1px solid var(--green-soft);
   border-radius: 8px;
-  background-color: #eef4f1;
+  background-color: var(--green-soft);
 }
 
 .issue-options[hidden] {
@@ -794,23 +826,23 @@ JS가 붙이는 상태값(aria-current, aria-pressed, aria-selected)을 그대�
 
 /* 조건 충족: 초록 테두리 + 안내 문장 */
 .field.is-valid textarea {
-  border-color: #2f6b5a;
+  border-color: var(--green);
 }
 
 .field.is-valid #reviewTextHelp {
-  color: #24503f;
+  color: var(--green-dark);
   font-weight: 700;
 }
 
 /* 오류: 붉은 테두리·배경 + 오류 문장 */
 .field.has-error select,
 .field.has-error textarea {
-  border-color: #a33a2b;
-  background-color: #fbeae7;
+  border-color: var(--danger);
+  background-color: var(--danger-bg);
 }
 
 .issue-options.has-error {
-  border-color: #a33a2b;
+  border-color: var(--danger);
 }
 
 #reviewStatus {
@@ -829,7 +861,7 @@ JS가 붙이는 상태값(aria-current, aria-pressed, aria-selected)을 그대�
 
 .review-item {
   padding: 16px 20px;
-  border: 1px solid #dde5e1;
+  border: 1px solid var(--line);
   border-radius: 14px;
 }
 
@@ -848,7 +880,7 @@ JS가 붙이는 상태값(aria-current, aria-pressed, aria-selected)을 그대�
 
 .review-item .review-item-sub {
   margin-top: 6px;
-  color: #5e6272;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -862,9 +894,10 @@ body.dark p {
   color: #c5d0cb;
 }
 
-/* 11주차: 진한 초록 초점 외곽선은 어두운 배경에서 안 보여서 밝은 초록으로 바꾼다 */
-body.dark :focus {
-  outline-color: #8cc2ad;
+/* 11주차: 진한 초록 초점 외곽선은 어두운 배경에서 안 보여서 밝은 초록으로 바꾼다
+   12주차: :focus를 다시 덮어쓰지 않고 --focus 값만 바꾼다. 외곽선 규칙은 그대로 이 이름을 불러온다 */
+body.dark {
+  --focus: #8cc2ad;
 }
 
 body.dark .content-section {
