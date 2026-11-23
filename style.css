@@ -603,6 +603,37 @@ select.has-error {
   font-weight: 700;
 }
 
+/* 13주차: 임시 보관·복구 안내. 문장과 버튼을 한 줄에 놓고, 좁으면 버튼이 아래로 내려간다 */
+.draft-notice {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 16px;
+  margin-bottom: 24px;
+  padding: 14px 18px;
+  border: 1px solid var(--line-green);
+  border-radius: 12px;
+  background-color: var(--green-soft);
+}
+
+.draft-notice p {
+  margin: 0;
+  color: var(--green-dark);
+  font-weight: 700;
+}
+
+.draft-notice button[hidden] {
+  display: none;
+}
+
+/* 문장이 없으면 빈 테두리 상자가 남지 않게 한다 (role="status"는 그대로 화면에 둔다) */
+.draft-notice:has(p:empty) {
+  margin-bottom: 0;
+  padding: 0;
+  border: 0;
+}
+
 /* 겹치는 예약이 있을 때 확인 화면의 날짜·시간 */
 .booking-summary dd.has-error {
   color: var(--danger);
@@ -1069,6 +1100,15 @@ body.dark .booking-help {
 body.dark .booking-progress.is-done {
   color: #ffffff;
   background-color: #2f6b5a;
+}
+
+body.dark .draft-notice {
+  border-color: #44524d;
+  background-color: #2c3532;
+}
+
+body.dark .draft-notice p {
+  color: #d6eae1;
 }
 
 body.dark .booking-step {
