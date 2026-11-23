@@ -477,6 +477,10 @@ function hasDraftInput(draft) {
 }
 
 function saveDraft() {
+  // 예약 완료 화면(4단계)은 이미 확정한 값이라 보관하지 않는다
+  // (완료 화면에서 이름을 고치면 확정한 예약 값이 새로고침 뒤 다시 나오던 문제)
+  if (!bookingFlow.hidden && bookingStepNow === 4) return;
+
   const draft = getDraftValues();
   if (!hasDraftInput(draft)) {
     clearDraft();
