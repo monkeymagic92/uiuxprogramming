@@ -575,23 +575,31 @@ function clearDraft() {
   draftStatus.textContent = "";
 }
 
-// click: 불러온 내용을 버리고 이름부터 다시 쓴다
+// click: 불러온 예약을 버리고 다시 고른다
+// 13주차 1차 점검 수정: 예전에는 이름·규칙 확인까지 지우고 흐름을 닫아서
+// 같은 이름을 다시 쓰고 규칙을 다시 체크해야 했고, 화면이 예약 준비로 올라가 안내 문장이 안 보였다.
+// 이제 이름·규칙 확인은 다시 예약하기처럼 남기고, 흐름 값만 지운 뒤 1단계와 안내를 같이 보여 준다
 draftDiscard.addEventListener("click", function () {
-  userNameInput.value = "";
-  handleUserNameInput();
-  userNameError.textContent = "";
-  userNameInput.classList.remove("has-error");
-  userNameInput.removeAttribute("aria-invalid");
-  agreeCheck.checked = false;
-  handleAgreeChange();
-
-  // 예약 흐름의 값·오류는 다시 예약하기와 같은 방법으로 되돌린 뒤 흐름을 닫는다
-  // (값이 모두 비어서 이 안에서 임시값도 지워진다)
   handleRestartClick();
-  bookingFlow.hidden = true;
 
-  userNameInput.focus();
-  draftStatus.textContent = "처음부터 입력할 수 있어요.";
+  // 예약 준비만 쓰다 말았으면(흐름이 닫혀 있음) 지울 예약이 없으니 이름·규칙 확인을 지운다
+  if (bookingFlow.hidden) {
+    userNameInput.value = "";
+    handleUserNameInput();
+    userNameError.textContent = "";
+    userNameInput.classList.remove("has-error");
+    userNameInput.removeAttribute("aria-invalid");
+    agreeCheck.checked = false;
+    handleAgreeChange();
+    clearDraft();
+    userNameInput.focus();
+    draftStatus.textContent = "불러온 내용을 지웠어요. 예약자 이름부터 새로 입력하세요.";
+    return;
+  }
+
+  draftDiscard.hidden = true;
+  draftStatus.textContent = "불러온 예약을 지웠어요. 이름과 규칙 확인은 그대로 두었으니 1단계부터 새로 고르세요.";
+  draftNotice.scrollIntoView({ block: "start" });
 });
 
 
