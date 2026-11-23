@@ -250,6 +250,7 @@ const bookingSteps = document.querySelectorAll(".booking-step");
 const bookingProgress = document.querySelector("#bookingProgress");
 const bookingArea = document.querySelector("#bookingArea");
 const stepNames = ["공부방 선택", "날짜·시간 선택", "내용 확인"];
+let bookingStepNow = 1;
 
 // 고른 단계 하나만 보이고 진행 표시도 그 단계에 맞춘다
 function showBookingStep(step) {
@@ -269,6 +270,10 @@ function showBookingStep(step) {
 
   // 숨겨진 단계에 포커스가 남지 않게 새 단계의 첫 입력칸이나 버튼으로 옮긴다
   currentStep.querySelector("select, input, button").focus();
+
+  // 13주차: 단계를 옮길 때도 위치를 임시 보관한다. 4단계(예약 완료)는 보관하지 않는다
+  bookingStepNow = step;
+  if (step <= 3) saveDraft();
 }
 
 // click: 규칙 확인(버튼 활성)에 이어 이름까지 있어야 예약 흐름을 연다
@@ -398,8 +403,16 @@ function handleCompleteClick() {
 
   bookingDoneText.textContent = summaryName.textContent + ", " + bookingArea.value + " "
     + bookingSeat.value + "을 " + summaryTime.textContent + " 동안 예약했습니다.";
-  addMyBooking();
+  const saved = addMyBooking();
   showBookingStep(4);
+
+  // 13주차: 저장에 성공했을 때만 작성 중 임시값을 지운다
+  // 실패하면 임시값을 남겨 새로고침 뒤 3단계에서 다시 확정할 수 있게 한다
+  if (saved) {
+    clearDraft();
+  } else {
+    draftStatus.textContent = "예약을 브라우저에 저장하지 못했어요. 새로고침하면 내 예약에서 사라질 수 있어요. 작성 내용은 남겨 두었으니 새로고침 뒤 3단계에서 다시 확정할 수 있어요.";
+  }
 }
 
 document.querySelector("#bookingComplete").addEventListener("click", handleCompleteClick);
@@ -434,6 +447,153 @@ function handleRestartClick() {
 
 document.querySelector("#bookingRestart").addEventListener("click", handleRestartClick);
 
+// 13주차: 작성 중인 예약 임시 보관·복구
+// 확정 전에 새로고침하면 이름·규칙 확인·선택값·단계가 모두 사라졌다 (README 13주차 QA)
+// 지금 탭에서만 이어 쓰면 되는 값이라 sessionStorage에 둔다. 확정한 예약은 기존대로 localStorage
+const DRAFT_STORAGE_KEY = "dongneBookingDraft";
+const prepareSection = document.querySelector("#prepare");
+const draftNotice = document.querySelector("#draftNotice");
+const draftStatus = document.querySelector("#draftStatus");
+const draftDiscard = document.querySelector("#draftDiscard");
+
+// 예약 준비와 예약 흐름의 값, 지금 단계(흐름이 닫혀 있으면 0)를 하나로 묶는다
+function getDraftValues() {
+  return {
+    name: userNameInput.value,
+    agree: agreeCheck.checked,
+    area: bookingArea.value,
+    seat: bookingSeat.value,
+    date: bookingDate.value,
+    time: bookingTime.value,
+    hours: bookingHours.value,
+    step: bookingFlow.hidden ? 0 : bookingStepNow
+  };
+}
+
+// 처음 화면 그대로면 보관할 내용이 없는 것으로 본다
+function hasDraftInput(draft) {
+  return Boolean(draft.name || draft.agree || draft.area || draft.seat !== "1인석"
+    || draft.date || draft.time || draft.hours !== "1");
+}
+
+function saveDraft() {
+  const draft = getDraftValues();
+  if (!hasDraftInput(draft)) {
+    clearDraft();
+    return;
+  }
+
+  try {
+    sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+    const savedMessage = "작성 내용을 임시 보관했어요. 새로고침해도 이어서 작성할 수 있어요.";
+    // 같은 문장을 다시 넣으면 화면 낭독기가 매번 읽으므로 바뀔 때만 넣는다
+    if (draftStatus.textContent !== savedMessage) {
+      draftStatus.textContent = savedMessage;
+    }
+  } catch (error) {
+    // 저장소가 막혀도 지금 입력한 값은 지우지 않고 위험만 알린다
+    draftStatus.textContent = "작성 내용을 임시 보관하지 못했어요. 새로고침하면 작성 내용이 사라질 수 있어요.";
+  }
+}
+
+// 글자 입력은 input, 선택 상자·체크박스는 change에서 보관한다
+[prepareSection, bookingFlow].forEach(function (area) {
+  area.addEventListener("input", saveDraft);
+  area.addEventListener("change", saveDraft);
+});
+
+// 비어 있거나 망가진 값이면 null을 돌려 빈 화면에서 시작한다
+function readDraft() {
+  try {
+    const draft = JSON.parse(sessionStorage.getItem(DRAFT_STORAGE_KEY));
+    if (!draft || typeof draft.name !== "string") {
+      return null;
+    }
+    return draft;
+  } catch (error) {
+    return null;
+  }
+}
+
+// 목록에 있는 값만 고르고, 없으면 처음 값으로 둔다
+function restoreSelect(select, value, firstValue) {
+  const found = Array.from(select.options).some(function (option) {
+    return option.value === value;
+  });
+  select.value = found ? value : firstValue;
+}
+
+function restoreDraft() {
+  const draft = readDraft();
+  if (!draft) return;
+
+  // 자바스크립트로 value를 바꾸면 input·change가 안 일어나서 글자 수와 버튼 상태를 직접 맞춘다
+  userNameInput.value = draft.name.slice(0, 10);
+  handleUserNameInput();
+  agreeCheck.checked = draft.agree === true;
+  handleAgreeChange();
+
+  restoreSelect(bookingArea, draft.area, "");
+  restoreSelect(bookingSeat, draft.seat, "1인석");
+  restoreSelect(bookingTime, draft.time, "");
+  restoreSelect(bookingHours, draft.hours, "1");
+  // 날짜 형식이 아니면 입력칸이 알아서 빈 값으로 만든다
+  bookingDate.value = String(draft.date || "");
+  handleSeatChange();
+
+  // 그 단계에 들어갈 조건이 안 맞으면 조건이 맞는 앞 단계로 돌린다
+  let step = draft.step;
+  if (!Number.isInteger(step) || step < 0 || step > 3) step = 0;
+  if (step >= 1 && (userNameInput.value.trim() === "" || !agreeCheck.checked)) step = 0;
+  if (step >= 2 && bookingArea.value === "") step = 1;
+  if (step === 3 && (bookingDate.value === "" || bookingTime.value === "")) step = 2;
+
+  if (step === 0) {
+    userNameInput.focus();
+    draftStatus.textContent = "작성하던 예약을 불러왔어요. 예약 준비에서 이어서 작성하세요.";
+  } else {
+    bookingFlow.hidden = false;
+    if (step === 3) fillSummary();
+    // showBookingStep이 다시 보관하면서 문장을 바꾸므로 안내 문장은 그 뒤에 쓴다
+    showBookingStep(step);
+    draftStatus.textContent = "작성하던 예약을 불러왔어요. " + step + "단계(" + stepNames[step - 1] + ")부터 이어서 작성하세요.";
+  }
+  draftDiscard.hidden = false;
+
+  // 안내 문장과 이어 쓸 칸이 한 화면에 보이게 한다
+  draftNotice.scrollIntoView({ block: step === 0 ? "end" : "start" });
+}
+
+// 임시값만 지운다. 확정한 예약(내 예약)은 그대로 남는다
+function clearDraft() {
+  try {
+    sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+  } catch (error) {
+    // 저장소를 쓸 수 없는 경우
+  }
+  draftDiscard.hidden = true;
+  draftStatus.textContent = "";
+}
+
+// click: 불러온 내용을 버리고 이름부터 다시 쓴다
+draftDiscard.addEventListener("click", function () {
+  userNameInput.value = "";
+  handleUserNameInput();
+  userNameError.textContent = "";
+  userNameInput.classList.remove("has-error");
+  userNameInput.removeAttribute("aria-invalid");
+  agreeCheck.checked = false;
+  handleAgreeChange();
+
+  // 예약 흐름의 값·오류는 다시 예약하기와 같은 방법으로 되돌린 뒤 흐름을 닫는다
+  // (값이 모두 비어서 이 안에서 임시값도 지워진다)
+  handleRestartClick();
+  bookingFlow.hidden = true;
+
+  userNameInput.focus();
+  draftStatus.textContent = "처음부터 입력할 수 있어요.";
+});
+
 
 // 내 예약: 확정한 예약을 배열에 모아 두고, 바뀔 때마다 목록을 다시 그린다
 const myBookingList = document.querySelector("#myBookingList");
@@ -452,11 +612,14 @@ function loadBookings() {
   }
 }
 
+// 13주차: 저장에 성공했는지 돌려준다. 예약 확정 때 임시값을 지울지 이 값으로 정한다
 function saveBookings() {
   try {
     localStorage.setItem(BOOKING_STORAGE_KEY, JSON.stringify(myBookings));
+    return true;
   } catch (error) {
     // 저장소가 막혀 있어도 지금 화면의 목록은 그대로 쓴다
+    return false;
   }
 }
 
@@ -483,11 +646,12 @@ function addMyBooking() {
     status: "예약됨"
   });
   nextBookingId = nextBookingId + 1;
-  saveBookings();
+  const saved = saveBookings();
 
   showListMessage("", "");
   // 취소됨만 보고 있었어도 방금 확정한 예약이 보이게 전체로 돌린다
   setBookingFilter("all");
+  return saved;
 }
 
 // 11주차: 카드마다 버튼 글자가 같아서 버튼 이름 앞에 어떤 예약인지 붙인다
@@ -1117,3 +1281,6 @@ document.querySelector("#reviewReset").addEventListener("click", function () {
   resetReviewForm();
   reviewArea.focus();
 });
+
+// 13주차: 페이지가 다 준비된 뒤 작성하던 예약이 있으면 한 번 불러온다
+restoreDraft();
